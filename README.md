@@ -1,3 +1,6 @@
+Ripple REST API Documentation
+=============================
+
 # Introduction
 ## Ripple Concepts
 ## Getting Started
