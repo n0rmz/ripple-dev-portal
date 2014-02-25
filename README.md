@@ -1,5 +1,4 @@
-Introduction
-============
+#Introduction
 ## Ripple Concepts
 ## Getting Started
 ### Setup
