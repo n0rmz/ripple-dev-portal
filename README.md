@@ -1,4 +1,4 @@
-Ripple REST API Documentation
-=============================
+Ripple REST API 
+===============
 
 ## Introduction
