@@ -1,22 +1,4 @@
-#Introduction
-## Ripple Concepts
-## Getting Started
-### Setup
-### Making a call
-### Errors
-### API Objects
+ripple-dev-portal
+=================
 
-#Payments
-## Preparing a Payment
-## Submitting a Payment
-## Confirming a Payment
-
-#Notifications
-## Retrieving a Payment
-
-#Generic Ripple Transactions
-
-#Rippled Server Status
-## Check 'rippled' Status
-
-
+Repository for the ripple developer portal, based off an open source fork of flatdoc.
