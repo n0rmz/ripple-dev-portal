@@ -6,21 +6,17 @@
 ### Errors
 ### API Objects
 
-Payments
-========
+#Payments
 ## Preparing a Payment
 ## Submitting a Payment
 ## Confirming a Payment
 
-Notifications
-=============
+#Notifications
 ## Retrieving a Payment
 
-Generic Ripple Transactions
-===========================
+#Generic Ripple Transactions
 
-Rippled Server Status
-=====================
+#Rippled Server Status
 ## Check 'rippled' Status
 
 
