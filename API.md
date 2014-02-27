@@ -1,8 +1,12 @@
 #Introduction
 
+## Ripple-REST API
+
+The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interface built to communicate directly to `rippled`. Our API is designed to have predictable, resource-oriented URLs and uses HTTP response codes to indicate any API errors. 
+
 ## Ripple Concepts
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Ripple is an internet protocol for financial transactions. It uses a shared ledger to track balances among parties no matter how physically far apart they may be. This allows each payments to clear in seconds rather than days. It also makes it possible for a person who uses one currency to seamlessly pay a person who uses a different currency.
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -34,6 +38,8 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 
 All currencies on the Ripple Network have issuers, except for XRP. In the case of XRP, the `"issuer"` field may be omitted or set to `""`. Otherwise, the `"issuer"` must be a valid Ripple address of the gateway that issues the currency.
 
+For more information about XRP see [the Ripple Wiki page on XRP](https://ripple.com/wiki/XRP). For more information about using currencies other than XRP on the Ripple Network see [the Ripple Wiki page for gateways](https://ripple.com/wiki/Ripple_for_Gateways).
+
 >Amount Object:
 
 ```js
@@ -44,8 +50,6 @@ All currencies on the Ripple Network have issuers, except for XRP. In the case o
 }
 ```
 
-For more information about XRP see [the Ripple Wiki page on XRP](https://ripple.com/wiki/XRP). For more information about using currencies other than XRP on the Ripple Network see [the Ripple Wiki page for gateways](https://ripple.com/wiki/Ripple_for_Gateways).
-
 #### 2. Payment
 
 The `Payment` object is a simplified version of the standard Ripple transaction format. 
@@ -53,6 +57,9 @@ The `Payment` object is a simplified version of the standard Ripple transaction 
 This `Payment` format is intended to be straightforward to create and parse, from strongly or loosely typed programming languages. Once a transaction is processed and validated it also includes information about the final details of the payment.
 
 The following fields are the minimum required to submit a `Payment`:
+
++ `dst_amount` is an [`Amount` object](#1-amount)
+
 ```js
 {
   "src_address": "rKXCummUHnenhYudNb9UoJ4mGBR75vFcgz",
@@ -64,7 +71,6 @@ The following fields are the minimum required to submit a `Payment`:
   }
 }
 ```
-+ `dst_amount` is an [`Amount` object](#1-amount)
 
 The full set of fields accepted on `Payment` submission is as follows:
 
