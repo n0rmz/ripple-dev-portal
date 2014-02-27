@@ -113,6 +113,7 @@ When a payment is confirmed in the Ripple ledger, it will have additional fields
 + `tx_fee` is the network transaction fee charged for processing the transaction. For more information on fees, see the [Ripple Wiki](https://ripple.com/wiki/Transaction_fees). In the standard Ripple transaction format fees are expressed in drops, or millionths of an XRP, but for clarity the new formats introduced by this API always use the full XRP unit.
 + `tx_src_bals_dec` is an array of [`Amount`](#1-amount) objects representing all of the balance changes of the `src_address` caused by the payment. Note that this includes the `tx_fee`
 + `tx_dst_bals_inc` is an array of [`Amount`](#1-amount) objects representing all of the balance changes of the `dst_address` caused by the payment
+
 ```js
 {
     /* User Specified */
@@ -171,6 +172,11 @@ If there is a new `Notification` for an account it will contain information abou
 
 If there is a new `notification` for an account, it will come in this format:
 
++ `tx_timestamp` is the UNIX timestamp for when the transaction was validated
++ `tx_url` is a URL that can be queried to retrieve the full details of the transaction. If it the transaction is a payment it will be returned in the `Payment` object format, otherwise it will be returned in the standard Ripple transaction format
++ `next_notification_url` is a URL that can be queried to get the notification following this one for the given address
++ `confirmation_token` is a temporary string that is returned upon transaction submission and can be matched against account notifications to confirm that the transaction was processed
+
 ```js
 {
   "address": "rKXCummUHnenhYudNb9UoJ4mGBR75vFcgz",
@@ -186,13 +192,12 @@ If there is a new `notification` for an account, it will come in this format:
   "confirmation_token": "55BA3440B1AAFFB64E51F497EFDF2022C90EDB171BBD979F04685904E38A89B7"
 }
 ```
-+ `tx_timestamp` is the UNIX timestamp for when the transaction was validated
-+ `tx_url` is a URL that can be queried to retrieve the full details of the transaction. If it the transaction is a payment it will be returned in the `Payment` object format, otherwise it will be returned in the standard Ripple transaction format
-+ `next_notification_url` is a URL that can be queried to get the notification following this one for the given address
-+ `confirmation_token` is a temporary string that is returned upon transaction submission and can be matched against account notifications to confirm that the transaction was processed
-
-
 If there are no new notifications, the empty `Notification` object will be returned in this format:
+
++ `type` will be `none` if there are no new notifications
++ `tx_state` will be `pending` if there are still transactions waiting to clear and `empty` otherwise
++ `next_notification_url` will be provided whether there are new notifications or not so that that field can always be used to query the API for new notifications.
+
 ```js
 {
   "address": "rKXCummUHnenhYudNb9UoJ4mGBR75vFcgz",
@@ -208,13 +213,10 @@ If there are no new notifications, the empty `Notification` object will be retur
   "confirmation_token": ""
 }
 ```
-+ `type` will be `none` if there are no new notifications
-+ `tx_state` will be `pending` if there are still transactions waiting to clear and `empty` otherwise
-+ `next_notification_url` will be provided whether there are new notifications or not so that that field can always be used to query the API for new notifications.
 
 #Payments
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+The most common use case for Ripple is to send a payment to another Ripple Address. The following section details the endpoints and calls needed to prepare, submit, and confirm a payment.
 
 ## Preparing a Payment
 
