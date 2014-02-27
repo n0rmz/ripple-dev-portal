@@ -9,6 +9,8 @@
 
 All currencies on the Ripple Network have issuers, except for XRP. In the case of XRP, the `"issuer"` field may be omitted or set to `""`. Otherwise, the `"issuer"` must be a valid Ripple address of the gateway that issues the currency.
 
+>Amount Object:
+
 ```js
 {
   "value": "1.0",
