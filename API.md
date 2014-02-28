@@ -336,7 +336,7 @@ The `:dst_amount` parameter uses `+` to separate the `value`, `currency`, and `i
 
 __NOTE:__ This command may be quite slow. If the command times out, please try it again.
 
-## Submitting a Payment
+### Submitting a Payment
 
 #### `POST /api/v1/addresses/:address/payments`
 
