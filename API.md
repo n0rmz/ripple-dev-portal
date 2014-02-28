@@ -6,19 +6,18 @@ The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interfa
 
 > Available API Routes:
 
-```
-1. [Notifications](#1-notifications)
-    + [`GET /api/v1/addresses/:address/next_notification`](#get-apiv1addressesaddressnext_notification)
-    + [`GET /api/v1/addresses/:address/next_notification/:prev_hash`](#get-apiv1addressesaddressnext_notificationprev_hash)
-2. [Payments](#2-payments)
-    + [`GET /api/v1/addresses/:address/payments/:destination_address/:destination_amount`](docs/REF.md#get-apiv1addressesaddresspaymentsdestination_addressdestination_amount)
-    + [`POST /api/v1/addresses/:address/payments`](#post-apiv1addressesaddresspayments)
-    + [`GET /api/v1/addresses/:address/payments/:hash`](#get-apiv1addressesaddresspaymentshash)
-3. [Standard Ripple Transactions](#3-standard-ripple-transactions)
-    + [`GET /api/v1/addresses/:address/txs/:hash`](#get-apiv1addressesaddresstxshash)
-4. [Server Info](#4-server-info)
-    + [`GET /api/v1/status`](#get-apiv1status)
-```
+
+> 1. Notifications:
+    GET /api/v1/addresses/:address/next_notification
+    GET /api/v1/addresses/:address/next_notification/:prev_hash
+>2. Payments:
+    GET /api/v1/addresses/:address/payments/:destination_address/:destination_amount
+    POST /api/v1/addresses/:address/payments
+    GET /api/v1/addresses/:address/payments/:hash
+> 3. Ripple Transactions
+    GET /api/v1/addresses/:address/txs/:hash
+>4. Server Info
+    GET /api/v1/status
 
 ## Ripple Concepts
 
