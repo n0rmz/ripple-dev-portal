@@ -23,6 +23,20 @@ The Ripple protocol supports multiple types of transactions other than just paym
 + `Payment` - Payment transactions is an authorized transfer of balance from one address to another.
 + `Trustline` - Trustline transactions is an authorized grant of trust between two addresses.
 
+### Sending Payments
+
+Sending a payment involves three steps:
+
+1. You need to create the payment object.  If the payment is to be made in a currency other than XRP, the Ripple system will identify the chain of trust, or ___path___, that connects the source and destination accounts; when creating the payment, the `ripple-rest` API will automatically find the set of possible paths for you.
+
+2. You can modify the payment object if necessary, and then ___submit___ it to the API for processing.
+
+3. Finally, you can check to see if your payment has gone through by looking for the appropriate ___notification___.
+
+You can also use notifications to see when a payment has been received.
+
+While the `ripple-rest` API provides a high-level interface for sending and receiving payments, there are other endpoints within the API that you can use to work with generic ripple transactions, and to check the status of the Ripple server.
+
 ##Getting Started
 
 ### Setup
