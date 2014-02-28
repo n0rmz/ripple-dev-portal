@@ -298,8 +298,8 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ## Available API Routes:
 
-+ [`GET /api/v1/addresses/:address/next_notification`](#get-apiv1addressesaddresspaymentsdst_addressdst_amount)
-+ `GET /api/v1/addresses/:address/next_notification/:prev-hash`
++ [`GET /api/v1/addresses/:address/next_notification`](#preparing-a-payment)
++ [`GET /api/v1/addresses/:address/next_notification/:prev-hash`](#submitting-a-payment)
 + `GET /api/v1/addresses/:address/payments/:dst_address/:dst_amount`
 + `POST /api/v1/addresses/:address/payments`
 + `GET /api/v1/addresses/:address/payments/:hash`
@@ -315,6 +315,8 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ### Preparing a Payment
 
+#### `GET /api/v1/addresses/:address/payments/:dst_address/:dst_amount`
+
 A payment needs to be formatted in the following order with the payment object to be submitted as a valid payment.
 
 ```js
@@ -326,8 +328,6 @@ A payment needs to be formatted in the following order with the payment object t
 
 The payment object itself can be prepared manually for any transactions that are occuring directly with XRP or if there are already established trustlines between the two parties for the currency being transferred. In most cases, a payment object can be created automatically by performing a `GET` on the payments endpoint.
 
-#### `GET /api/v1/addresses/:address/payments/:dst_address/:dst_amount`
-
 This call generates possible payments for a given set of parameters. This is a wrapper around the [Ripple path-find command](https://ripple.com/wiki/RPC_API#path_find) that returns an array of [`Payment Objects`](#2-payment), which can be submitted directly to [`POST /api/v1/addresses/:address/payments`](#post-apiv1addressesaddresspayments).
 
 This uses the [`Payment` Object format](#2-payment).
@@ -338,7 +338,38 @@ __NOTE:__ This command may be quite slow. If the command times out, please try i
 
 ## Submitting a Payment
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+#### `POST /api/v1/addresses/:address/payments`
+
+Submit a payment in the [`Payment` Object](#2-payment) format.
+
+__DO NOT SUBMIT YOUR SECRET TO AN UNTRUSTED REST API SERVER__ -- this is the key to your account and your money. If you are using the test server provided, only use test accounts to submit payments.
+
+Request JSON:
+```js
+{
+  "secret": "s...",
+  "payment": { /* Payment */ }
+}
+```
+
+Response:
+
+```js
+{
+    "success": true,
+    "confirmation_token": "55BA3440B1AAFFB64E51F497EFDF2022C90EDB171BBD979F04685904E38A89B7"
+}
+```
+Or if there is a problem with the transaction:
+
+```js
+{
+  "success": false,
+  "error": "tecPATH_DRY",
+  "message": "Path could not send partial amount. Please ensure that the src_address has sufficient funds (in the src_amount currency, if specified) to execute this transaction."
+}
+```
+More information about transaction errors can be found on the [Ripple Wiki](https://ripple.com/wiki/Transaction_errors). Save the `confirmation_token` to check for transaction confirmation by matching that against new `notification`'s. Payments cannot be cancelled once they are submitted.
 
 ## Confirming a Payment
 
@@ -352,7 +383,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-#GENERIC RIPPLE TRANSACTIONS
+#RIPPLE TRANSACTIONS
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
