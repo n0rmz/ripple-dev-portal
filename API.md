@@ -2,29 +2,17 @@
 
 ## Ripple-REST API
 
-The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interface built to communicate directly to `rippled`. Our API is designed to have predictable, resource-oriented URLs and uses HTTP response codes to indicate any API errors.
+The `ripple-rest` API makes it easy to access the Ripple system via a RESTful web interface.  In this section, we will cover the concepts you need to understand, and get you started accessing the API and learning how to use it.
 
-Available API Routes:
-
-+ `GET /api/v1/addresses/:address/next_notification`
-+ `GET /api/v1/addresses/:address/next_notification/:prev-hash`
-+ `GET /api/v1/addresses/:address/payments/:dst_address/:dst_amount`
-+ `POST /api/v1/addresses/:address/payments`
-+ `GET /api/v1/addresses/:address/payments/:hash`
-+ `GET /api/v1/addresses/:address/txs/:hash`
-+ `GET /api/v1/status`
-+ `GET /api/v1/server/connected`
-
+While there are different APIs that you can use, for example by accessing the `rippled` server directly via a web socket, this documentation focuses on the `ripple-rest` API as this is the high-level API recommended for working with the Ripple system.
 
 ## Ripple Concepts
 
-Ripple is an internet protocol for financial transactions. It uses a shared ledger to track balances among parties no matter how physically far apart they may be. This allows each payments to clear in seconds rather than days. It also makes it possible for a person who uses one currency to seamlessly pay a person who uses a different currency. Learn more about it on the [Ripple Wiki](https://ripple.com/wiki/Ripple_Introduction).
+Ripple is an internet protocol for financial transactions. You can use Ripple to send money anywhere in the world, in any currency, instantly and for free. Learn more about it on the [Ripple Wiki](https://ripple.com/wiki/Ripple_Introduction).
 
 ### Ripple Address
 
-A Ripple Address is an entry in the Ledger. People typically have one Address that stores their Ripple credits, IOUs and the trust paths granted to and from other accounts. Each address has a private key. Anyone that knows an addresses' private key can authorize transactions from that address.
-
->Sample Ripple Address: rpvfJ4mR6QQAeogpXEKnuyGBx8mYCSnYZi
+In the Ripple world, each account is identified by a Ripple ___address___.  A ripple address is a string that uniquely identifies an account, for example: `rNsJKf3kaxvFvR8RrDi9P3LBk2Zp6VL8mp`
 
 Learn more about the [Ripple Address](https://ripple.com/wiki/Account).
 
@@ -39,11 +27,69 @@ The Ripple protocol supports multiple types of transactions other than just paym
 
 ### Setup
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Before you can use the `ripple-rest` API, you will need to have two things:
 
-### Making a call
+ * An activated Ripple account.  If you don't have a Ripple account, you can use the Ripple web client to create one, as described in the [Client manual](https://ripple.com/wiki/Client_Manual).  Make sure you have a copy of the Ripple address for your account; the address can be found by clicking on the __Receive__ tab in the web client.
+ 
+ * The URL of the server running the `ripple-rest` API that you wish to use.  In this documentation, we will assume that the server is running at [https://ripple-rest.herokuapp.com](https://ripple-rest.herokuapp.com), which is the URL for a test version of the server.  When you follow the examples below, make sure that you replace this with the URL for the server you want to access. Please remember to only use 
+ 
+As a programmer, you will also need to have a suitable HTTP client library that allows you to make secure HTTP (`HTTPS`) requests.  To follow the examples below, you will need to have access to the `curl` command-line tool.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+### Exploring the API
+
+Let's start by using `curl` to see if the `ripple-rest` API is currently running.  Type the following into a terminal window:
+
+`curl https://ripple-rest.herokuapp.com/api/v1/status`
+
+After a short delay, the following response should be displayed:
+
+```js
+{
+       "api_server_status": "online",
+       "rippled_server_url": "wss://s_west.ripple.com:443",
+       "rippled_server_status": {
+         "info": {
+           "build_version": "0.21.0-rc2",
+           "complete_ledgers": "32570-5254146",
+           "hostid": "WEAN",
+           "last_close": {
+             "converge_time_s": 2.022,
+             "proposers": 5
+           },
+           "load_factor": 1,
+           "peers": 52,
+           "pubkey_node": "n9LVyJ9GGBwHeeZ1bwPQUKj5P6vyD5tox2ozMPadMDvXx8CrPPmJ",
+           "server_state": "full",
+           "validated_ledger": {
+             "age": 6,
+             "base_fee_xrp": 1.0e-5,
+             "hash": "ADF8BEFA91F4D355C60AE37E7ED79E91591704D052114F2BBDB6AF892E5E749E",
+             "reserve_base_xrp": 20,
+             "reserve_inc_xrp": 5,
+             "seq": 5254146
+           },
+           "validation_quorum": 3
+         }
+       },
+       "api_documentation_url": "https://github.com/ripple/ripple-rest"
+     }
+```
+#### Using the API ####
+
+The `ripple-rest` API conforms to the following general behavior for a web interface:
+
+* The HTTP method identifies what you are trying to do.  Generally, HTTP `GET` requests are used to retrieve information, while HTTP `POST` requests are used to make changes or submit information.
+
+* You make HTTP (or HTTPS) requests to the API endpoint, including the desired resources within the URL itself.
+
+* If more complicated information needs to be sent, it will be included as JSON-formatted data within the body of the HTTP POST request.
+
+* Upon completion, the server will return an HTTP status code of 200 (OK), and a `Content-Type` value of `application/json`.  The body of the response will be a JSON-formatted object containing the information returned by the endpoint.
+
+* The returned JSON object will include a `success` field indicating whether the request was successful or not.
+
+* If an error occurred, the returned object will include `error` and `message` fields, where `error` is a short string identifying the error that occurred, and `message` will be a longer human-readable string explaining what went wrong.
 
 ### Errors
 
@@ -234,6 +280,17 @@ If there are no new notifications, the empty `Notification` object will be retur
   "source_transaction_id": "",
 }
 ```
+
+## Available API Routes:
+
++ `GET /api/v1/addresses/:address/next_notification`
++ `GET /api/v1/addresses/:address/next_notification/:prev-hash`
++ `GET /api/v1/addresses/:address/payments/:dst_address/:dst_amount`
++ `POST /api/v1/addresses/:address/payments`
++ `GET /api/v1/addresses/:address/payments/:hash`
++ `GET /api/v1/addresses/:address/txs/:hash`
++ `GET /api/v1/status`
++ `GET /api/v1/server/connected`
 
 #PAYMENTS
 
