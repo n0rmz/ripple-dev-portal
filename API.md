@@ -6,6 +6,7 @@ The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interfa
 
 > Available API Routes:
 
+```
 1. [Notifications](#1-notifications)
     + [`GET /api/v1/addresses/:address/next_notification`](#get-apiv1addressesaddressnext_notification)
     + [`GET /api/v1/addresses/:address/next_notification/:prev_hash`](#get-apiv1addressesaddressnext_notificationprev_hash)
@@ -17,6 +18,7 @@ The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interfa
     + [`GET /api/v1/addresses/:address/txs/:hash`](#get-apiv1addressesaddresstxshash)
 4. [Server Info](#4-server-info)
     + [`GET /api/v1/status`](#get-apiv1status)
+```
 
 ## Ripple Concepts
 
