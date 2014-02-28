@@ -8,7 +8,7 @@ Available API Routes:
 
 + `GET /api/v1/addresses/:address/next_notification`
 + `GET /api/v1/addresses/:address/next_notification/:prev-hash`
-+ `GET /api/v1/addresses/:address/payments/:destination_address/:destination_amount`
++ `GET /api/v1/addresses/:address/payments/:dst_address/:dst_amount`
 + `POST /api/v1/addresses/:address/payments`
 + `GET /api/v1/addresses/:address/payments/:hash`
 + `GET /api/v1/addresses/:address/txs/:hash`
