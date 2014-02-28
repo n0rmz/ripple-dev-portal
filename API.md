@@ -117,7 +117,7 @@ All currencies on the Ripple Network have issuers, except for XRP. In the case o
 
 For more information about XRP see [the Ripple Wiki page on XRP](https://ripple.com/wiki/XRP). For more information about using currencies other than XRP on the Ripple Network see [the Ripple Wiki page for gateways](https://ripple.com/wiki/Ripple_for_Gateways).
 
->Amount Object:
+`Amount Object:`
 
 ```js
 {
@@ -126,7 +126,8 @@ For more information about XRP see [the Ripple Wiki page on XRP](https://ripple.
   "issuer": "r..."
 }
 ```
-Or for XRP:
+`Or for XRP:`
+
 ```js
 {
   "value": "1.0",
@@ -297,7 +298,7 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ## Available API Routes:
 
-+ `GET /api/v1/addresses/:address/next_notification`
++ [`GET /api/v1/addresses/:address/next_notification`](#get-apiv1addressesaddresspaymentsdst_addressdst_amount)
 + `GET /api/v1/addresses/:address/next_notification/:prev-hash`
 + `GET /api/v1/addresses/:address/payments/:dst_address/:dst_amount`
 + `POST /api/v1/addresses/:address/payments`
@@ -306,13 +307,34 @@ If there are no new notifications, the empty `Notification` object will be retur
 + `GET /api/v1/status`
 + `GET /api/v1/server/connected`
 
-#PAYMENTS
+# PAYMENTS
 
-The most common use case for Ripple is to send a payment to another Ripple Address. The following section details the endpoints and calls needed to prepare, submit, and confirm a payment.
+## Outgoing Payments
 
-## Preparing a Payment
+`ripple-rest` provides access to `ripple-lib`'s robust transaction submission processes. This means that it will set the fee, manage the transaction sequence numbers, sign the transaction with your secret, and resubmit the transaction up to 10 times if `rippled` reports an initial error that can be solved automatically.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+### Preparing a Payment
+
+A payment needs to be formatted in the following order with the payment object to be submitted as a valid payment.
+
+```js
+{
+  "secret": "s...",
+  "payment": { /* Payment object */ }
+}
+```
+
+The payment object itself can be prepared manually for any transactions that are occuring directly with XRP or if there are already established trustlines between the two parties for the currency being transferred. In most cases, a payment object can be created automatically by performing a `GET` on the payments endpoint.
+
+#### `GET /api/v1/addresses/:address/payments/:dst_address/:dst_amount`
+
+This call generates possible payments for a given set of parameters. This is a wrapper around the [Ripple path-find command](https://ripple.com/wiki/RPC_API#path_find) that returns an array of [`Payment Objects`](#2-payment), which can be submitted directly to [`POST /api/v1/addresses/:address/payments`](#post-apiv1addressesaddresspayments).
+
+This uses the [`Payment` Object format](#2-payment).
+
+The `:dst_amount` parameter uses `+` to separate the `value`, `currency`, and `issuer` fields. For XRP the format is `0.1+XRP` and for other currencies it is `0.1+USD+r...`, where the `r...` is the Ripple address of the currency's issuer.
+
+__NOTE:__ This command may be quite slow. If the command times out, please try it again.
 
 ## Submitting a Payment
 
