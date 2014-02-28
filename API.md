@@ -4,9 +4,33 @@
 
 The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interface built to communicate directly to `rippled`. Our API is designed to have predictable, resource-oriented URLs and uses HTTP response codes to indicate any API errors.
 
+> Available API Routes:
+
+1. [Notifications](#1-notifications)
+    + [`GET /api/v1/addresses/:address/next_notification`](#get-apiv1addressesaddressnext_notification)
+    + [`GET /api/v1/addresses/:address/next_notification/:prev_hash`](#get-apiv1addressesaddressnext_notificationprev_hash)
+2. [Payments](#2-payments)
+    + [`GET /api/v1/addresses/:address/payments/:destination_address/:destination_amount`](docs/REF.md#get-apiv1addressesaddresspaymentsdestination_addressdestination_amount)
+    + [`POST /api/v1/addresses/:address/payments`](#post-apiv1addressesaddresspayments)
+    + [`GET /api/v1/addresses/:address/payments/:hash`](#get-apiv1addressesaddresspaymentshash)
+3. [Standard Ripple Transactions](#3-standard-ripple-transactions)
+    + [`GET /api/v1/addresses/:address/txs/:hash`](#get-apiv1addressesaddresstxshash)
+4. [Server Info](#4-server-info)
+    + [`GET /api/v1/status`](#get-apiv1status)
+
 ## Ripple Concepts
 
 Ripple is an internet protocol for financial transactions. It uses a shared ledger to track balances among parties no matter how physically far apart they may be. This allows each payments to clear in seconds rather than days. It also makes it possible for a person who uses one currency to seamlessly pay a person who uses a different currency. Learn more about `Ripple` on the [Ripple Wiki](https://ripple.com/wiki/Ripple_Introduction)
+
+### Ripple Address
+
+
+### Transaction Types
+
+The Ripple protocol supports many types of transactions other than just payments. 
+
+- `Payments` - Payment transactions are used to describe all transactions that deal with payment settlement
+- `Trustlines` - Trustline transactions are used to describe transactions that deal with establishing trust with other Ripple users
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
