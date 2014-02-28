@@ -2,11 +2,11 @@
 
 ## Ripple-REST API
 
-The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interface built to communicate directly to `rippled`. Our API is designed to have predictable, resource-oriented URLs and uses HTTP response codes to indicate any API errors. 
+The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interface built to communicate directly to `rippled`. Our API is designed to have predictable, resource-oriented URLs and uses HTTP response codes to indicate any API errors.
 
 ## Ripple Concepts
 
-Ripple is an internet protocol for financial transactions. It uses a shared ledger to track balances among parties no matter how physically far apart they may be. This allows each payments to clear in seconds rather than days. It also makes it possible for a person who uses one currency to seamlessly pay a person who uses a different currency.
+Ripple is an internet protocol for financial transactions. It uses a shared ledger to track balances among parties no matter how physically far apart they may be. This allows each payments to clear in seconds rather than days. It also makes it possible for a person who uses one currency to seamlessly pay a person who uses a different currency. Learn more about `Ripple` on the [Ripple Wiki](https://ripple.com/wiki/Ripple_Introduction)
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
