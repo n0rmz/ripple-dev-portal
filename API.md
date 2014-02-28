@@ -4,23 +4,16 @@
 
 The [`ripple-rest`](http://github.com/ripple/ripple-rest) API is RESTful interface built to communicate directly to `rippled`. Our API is designed to have predictable, resource-oriented URLs and uses HTTP response codes to indicate any API errors.
 
-> Available API Routes:
+Available API Routes:
 
->GET /api/v1/addresses/:address/next_notification
-
->GET /api/v1/addresses/:address/next_notification/:prev-hash
-
->GET /api/v1/addresses/:address/payments/:destination_address/:destination_amount
-
->POST /api/v1/addresses/:address/payments
-
->GET /api/v1/addresses/:address/payments/:hash
-
->GET /api/v1/addresses/:address/txs/:hash
-
->GET /api/v1/status
-
->GET /api/v1/server/connected
++ `GET /api/v1/addresses/:address/next_notification`
++ `GET /api/v1/addresses/:address/next_notification/:prev-hash`
++ `GET /api/v1/addresses/:address/payments/:destination_address/:destination_amount`
++ `POST /api/v1/addresses/:address/payments`
++ `GET /api/v1/addresses/:address/payments/:hash`
++ `GET /api/v1/addresses/:address/txs/:hash`
++ `GET /api/v1/status`
++ `GET /api/v1/server/connected`
 
 
 ## Ripple Concepts
@@ -29,6 +22,11 @@ Ripple is an internet protocol for financial transactions. It uses a shared ledg
 
 ### Ripple Address
 
+A Ripple Address is an entry in the Ledger. People typically have one Address that stores their Ripple credits, IOUs and the trust paths granted to and from other accounts. Each address has a private key. Anyone that knows an addresses' private key can authorize transactions from that address.
+
+>Sample Ripple Address: rpvfJ4mR6QQAeogpXEKnuyGBx8mYCSnYZi
+
+Learn more about the [Ripple Address](https://ripple.com/wiki/Account)
 
 ### Transaction Types
 
