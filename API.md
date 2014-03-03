@@ -10,20 +10,19 @@ While there are different APIs that you can use, for example by accessing the `r
 
 ## Ripple Concepts
 
-Ripple is an internet protocol for financial transactions. You can use Ripple to send money anywhere in the world, in any currency, instantly and for free. Learn more about it on the [Ripple Wiki](https://ripple.com/wiki/Ripple_Introduction).
-
 ### Ripple Address
 
-In the Ripple world, each account is identified by a Ripple ___address___.  A ripple address is a string that uniquely identifies an account, for example: `rNsJKf3kaxvFvR8RrDi9P3LBk2Zp6VL8mp`
+Ripple is a system for making financial transactions.  You can use Ripple to send money anywhere in the world, in any currency, instantly and for free.
 
-Learn more about the [Ripple Address](https://ripple.com/wiki/Account).
+In the Ripple world, each account is identified by a [Ripple Address](https://ripple.com/wiki/Account).  A ripple address is a string that uniquely identifies an account, for example: `rNsJKf3kaxvFvR8RrDi9P3LBk2Zp6VL8mp`
 
-### Transaction Types
+A Ripple ___payment___ can be sent using Ripple's native currency, XRP, directly from one account to another.  Payments can also be sent in other currencies, for example US dollars, Euros, Pounds or Bitcoins, though the process is slightly more complicated.
 
-The Ripple protocol supports multiple types of transactions other than just payments. Transactions are considered to be any changes to the database made on behalf of a Ripple Address. Transactions are first constructed and then submitted to the network. After transaction processing, meta data is associated with the transaction which itemizes the resulting changes to the ledger.
+Payments are made between two accounts, by specifying the ___source___ and ___destination___ address for those accounts.  A payment also involves an ___amount___, which includes both the numeric amount and the currency, for example: `100+XRP`.
 
-+ `Payment` - Payment transactions is an authorized transfer of balance from one address to another.
-+ `Trustline` - Trustline transactions is an authorized grant of trust between two addresses.
+When you make a payment in a currency other than XRP, you also need to include the Ripple address of the ___issuer___.  The issuer is the gateway or other entity who holds the foreign-currency funds on your behalf.  For foreign-currency payments, the amount will look something like this: `100+USD+rNsJKf3kaxvFvR8RrDi9P3LBk2Zp6VL8mp`.
+
+While the `ripple-rest` API provides a high-level interface for sending and receiving payments, there are other endpoints within the API that you can use to work with generic ripple transactions, and to check the status of the Ripple server.
 
 ### Sending Payments
 
@@ -37,7 +36,12 @@ Sending a payment involves three steps:
 
 You can also use notifications to see when a payment has been received.
 
-While the `ripple-rest` API provides a high-level interface for sending and receiving payments, there are other endpoints within the API that you can use to work with generic ripple transactions, and to check the status of the Ripple server.
+### Transaction Types
+
+The Ripple protocol supports multiple types of transactions other than just payments. Transactions are considered to be any changes to the database made on behalf of a Ripple Address. Transactions are first constructed and then submitted to the network. After transaction processing, meta data is associated with the transaction which itemizes the resulting changes to the ledger.
+
++ `Payment` - Payment transactions is an authorized transfer of balance from one address to another.
++ `Trustline` - Trustline transactions is an authorized grant of trust between two addresses.
 
 ##Getting Started
 
@@ -298,7 +302,7 @@ If there are no new notifications, the empty `Notification` object will be retur
 }
 ```
 
-## Available API Routes:
+## Available API Routes
 
 + [`GET /api/v1/addresses/:address/next_notification`](#preparing-a-payment)
 + [`GET /api/v1/addresses/:address/next_notification/:prev-hash`](#submitting-a-payment)
@@ -324,7 +328,16 @@ A payment needs to be formatted in the following order with the payment object t
 ```js
 {
   "secret": "s...",
-  "payment": { /* Payment object */ }
+  "payment": { /* Payment Object */
+    "source_address": "rKXCummUHnenhYudNb9UoJ4mGBR75vFcgz",
+    "source_transaction_id": "12345",
+    "destination_address": "rNw4ozCG514KEjPs5cDrqEcdsi31Jtfm5r",
+    "destination_amount": {
+      "value": "0.001",
+      "currency": "XRP",
+      "issuer": ""
+    }
+  }
 }
 ```
 
