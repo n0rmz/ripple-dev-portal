@@ -1,6 +1,6 @@
 #INTRODUCTION
 
-## Ripple-REST API
+## Ripple-REST API(BETA)
 
 The `ripple-rest` API makes it easy to access the Ripple system via a RESTful web interface.  In this section, we will cover the concepts you need to understand, and get you started accessing the API and learning how to use it.
 
