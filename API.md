@@ -6,7 +6,7 @@ The `ripple-rest` API makes it easy to access the Ripple system via a RESTful we
 
 While there are different APIs that you can use, for example by accessing the `rippled` server directly via a web socket, this documentation focuses on the `ripple-rest` API as this is the high-level API recommended for working with the Ripple system.
 
-`ripple-rest` API is currently in BETA and subject to multiple changes and iterations as it is being finalized. Please double check with the [`ripple-rest`](https://github.com/ripple/ripple-rest) github repo for the most up-to-date versions and documentation.
+`ripple-rest` API is currently in BETA and subject to multiple changes and iterations as it is being finalized. Please double check with the <a href="https://github.com/ripple/ripple-rest" target="_blank">`ripple-rest`</a> github repo for the most up-to-date versions and documentation.
 
 ## Ripple Concepts
 
