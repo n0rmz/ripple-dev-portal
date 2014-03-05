@@ -14,7 +14,7 @@ While there are different APIs that you can use, for example by accessing the `r
 
 Ripple is a system for making financial transactions.  You can use Ripple to send money anywhere in the world, in any currency, instantly and for free.
 
-In the Ripple world, each account is identified by a [Ripple Address](https://ripple.com/wiki/Account).  A ripple address is a string that uniquely identifies an account, for example: `rNsJKf3kaxvFvR8RrDi9P3LBk2Zp6VL8mp`
+In the Ripple world, each account is identified by a <a href="https://ripple.com/wiki/Account" target="_blank">Ripple Address</a>.  A ripple address is a string that uniquely identifies an account, for example: `rNsJKf3kaxvFvR8RrDi9P3LBk2Zp6VL8mp`
 
 A Ripple ___payment___ can be sent using Ripple's native currency, XRP, directly from one account to another.  Payments can also be sent in other currencies, for example US dollars, Euros, Pounds or Bitcoins, though the process is slightly more complicated.
 
