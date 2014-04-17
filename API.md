@@ -129,12 +129,12 @@ There are two different ways in which errors are returned by the `ripple-rest` A
 
 Low-level errors are indicated by the server returning an appropriate HTTP status code.  The following status codes are currently supported:
 
-+ `Bad Request (400)`  
-+ `Method Not Accepted (404)`  
-+ `Gateway Timeout (502)`  
-+ `Bad Gateway (504)`
++ `Bad Request (400):` The JSON body submitted is malformed or invalid.  
++ `Method Not Accepted (404):` The endpoint is not allowed.  
++ `Gateway Timeout (502):` The rippled server is taking to long to respond.  
++ `Bad Gateway (504):` The rippled server is non-responsive.
 
-Application-level errors are indicated by an `OK` (200) or `Accepted` (202) status code, where the body of the response is a JSON object with the following fields:
+Application-level errors are described further in the body of the JSON response with the following fields:
 
 + `success:`
 This will be set to `false` if an error occurred.
@@ -153,15 +153,6 @@ A longer human-readable string explaining what went wrong.
 All currencies on the Ripple Network have issuers, except for XRP. In the case of XRP, the `issuer` field may be omitted or set to `""`. Otherwise, the `issuer` must be a valid Ripple address of the gateway that issues the currency.
 
 For more information about XRP see  <a href="https://ripple.com/wiki/XRP" target="_blank">the Ripple wiki page on XRP</a>. For more information about using currencies other than XRP on the Ripple Network see <a href="https://ripple.com/wiki/Ripple_for_Gateways" target="_blank">the Ripple wiki page for gateways</a>.
-
-<!-- I suggest removing the following paragraph -- it just adds confusion.  All examples show the value as a string, and users will copy this behaviour from the documentation.  Strings are always going to be 100% accurate, so we don't need to concern the user with the issue, or even the possibility of sending values as numeric values -- especially as users may not know what the "BigNumber" library is.
-
-Original text:
-
-Note that the `value` can either be specified as a string or a number. Internally this API uses a BigNumber library to retain higher precision if numbers are inputted as strings.
-
-End of original text.
--->
 
 Amount Object:
 
@@ -189,7 +180,7 @@ The `Payment` object is a simplified version of the standard Ripple transaction 
 
 This `Payment` format is intended to be straightforward to create and parse, from strongly or loosely typed programming languages. Once a transaction is processed and validated it also includes information about the final details of the payment.
 
-A minimal `Payment` object will look like this:
+<!-- A minimal `Payment` object will look like this:
 
 ```js
 {
@@ -202,8 +193,7 @@ A minimal `Payment` object will look like this:
   }
 }
 ```
-
-where:
+-->
 
  + `src_address` is the Ripple address for the source account, as a string.
  
@@ -226,6 +216,8 @@ The full set of fields accepted on `Payment` submission is as follows:
 + `flag_no_direct_ripple` is a boolean that can be set to `true` if `paths` are specified and the sender would like the Ripple Network to disregard any direct paths from the `src_address` to the `dst_address`. This may be used to take advantage of an arbitrage opportunity or by gateways wishing to issue balances from a hot wallet to a user who has mistakenly set a trustline directly to the hot wallet. Most users will not need to use this option.
 
 + `flag_partial_payment` is a boolean that, if set to true, indicates that this payment should go through even if the whole amount cannot be sent because of a lack of liquidity or funds in the `src_address` account. The vast majority of senders will never need to use this option.
+
+Payment Object:
 
 ```js
 {
@@ -361,35 +353,25 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ### Preparing a Payment ###
 
-> __`GET /v1/accounts/{account}/payments/paths/{dst_account}/{dst_amount}`__
+__`GET /v1/accounts/{account}/payments/paths/{dst_account}/{dst_amount}`__
 
 To prepare a payment, you first make an HTTP `GET` call to the above endpoint.  This will generate a list of possible payments between the two parties for the desired amount, taking into account the established trustlines between the two parties for the currency being transferred.  You can then choose one of the returned payments, modify it if necessary (for example, to set slippage values or tags), and then submit the payment for processing.
 
 The following parameters are required by this API endpoint:
 
-> `account`
-> 
-> > The Ripple address for the source account.
-> 
-> `dst_account`
-> 
-> > The Ripple address for the destination account.
-> 
-> `dst_amount`
-> 
-> > The amount to be sent to the destination account.  Note that this value uses `+` characters to separate the `value`, `currency` and `issuer` fields.  For XRP, the format is:
-> > 
-> > > `0.1+XRP`
-> > 
-> > For other currencies, you need to include the Ripple address of the currency's issuer, like this:  
-> > 
-> > > `0.1+USD+r...`
+`account:` The Ripple address for the source account.
+`dst_account:` The Ripple address for the destination account.
+`dst_amount:` The amount to be sent to the destination account.  Note that this value uses `+` characters to separate the `value`, `currency` and `issuer` fields.  For XRP, the format is:
+
+`0.1+XRP`
+ 
+For other currencies, you need to include the Ripple address of the currency's issuer, like this:  
+
+`0.1+USD+r...`
 
 Optionally, you can also include the following as a query string parameter:
 
-> `source_currencies`
-> 
-> > A comma-separated list of source currencies.  This is used to filter the returned list of possible payments.  Each source currency can be specified either as a currency code (eg, `USD`), or as a currency code and issuer (eg, `USD+r...`).  If the issuer is not specified for a currency other than XRP, then the results will be limited to the specified currency, but any issuer for that currency will be included in the results.
+`source_currencies:` A comma-separated list of source currencies.  This is used to filter the returned list of possible payments.  Each source currency can be specified either as a currency code (eg, `USD`), or as a currency code and issuer (eg, `USD+r...`).  If the issuer is not specified for a currency other than XRP, then the results will be limited to the specified currency, but any issuer for that currency will be included in the results.
 
 Note that this call is a wrapper around the [Ripple path-find](https://ripple.com/wiki/RPC_API#path_find) command, and returns an array of [`Payment`](#payment_object) objects, like this:
 
