@@ -21,7 +21,7 @@ While there are different APIs that you can use, for example by accessing the `r
 
 
 * [`POST /v1/payments`](#submitting-a-payment)
-* [`POST /v1/accounts/{:address}/settings`](#changing-account-settings)
+* [`POST /v1/accounts/{:address}/settings`](#updating-account-settings)
 * [`POST /v1/accounts/{:address}/trustlines`](#granting-a-trustline)
 
 ## API Overview ##
@@ -636,7 +636,7 @@ __`POST /v1/accounts/{account}/settings`__
 {
   "account": "r...",
   "secret": "s...",
-  /* Settings */
+  "settings": {/* Settings */}
 }
 ```
 
