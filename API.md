@@ -14,6 +14,7 @@ While there are different APIs that you can use, for example by accessing the `r
 * [`GET /v1/accounts/{:address}/payments`](#confirming-a-payment) 
 * [`GET /v1/accounts/{:address}/balances`](#account-balances)
 * [`GET /v1/accounts/{:address}/settings`](#account-settings)
+* [`POST /v1/accounts/{:address}/settings`](#changing-account-settings)
 * [`GET /v1/accounts/{:address}/trustlines`](#reviewing-trustlines)
 * [`POST /v1/accounts/{:address}/trustlines`](#granting-a-trustline)
 * [`GET /v1/server/connected`](#check-connection-state)
@@ -352,7 +353,7 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ### Preparing a Payment ###
 
-__GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}__
+__GET /v1/accounts/{:address}/payments/paths/{destination_account}/{destination_amount}__
 
 
 To prepare a payment, you first make an HTTP `GET` call to the above endpoint.  This will generate a list of possible payments between the two parties for the desired amount, taking into account the established trustlines between the two parties for the currency being transferred.  You can then choose one of the returned payments, modify it if necessary (for example, to set slippage values or tags), and then submit the payment for processing.
@@ -438,9 +439,9 @@ Note that payments cannot be cancelled once they have been submitted.
 
 ### Confirming a Payment ###
 
-__`GET /v1/accounts/{account}/payments/{transaction_id}`__
+__`GET /v1/accounts/{:address}/payments/{:hash} or {:client_resource_id}`__
 
-To confirm that your payment has been submitted successfully, you can call this API endpoint.  The `transaction_id` value can either be the transaction hash for the desired payment, or the payment's client resource ID.
+To confirm that your payment has been submitted successfully, you can call this API endpoint.  The `hash` value can either be the transaction hash for the desired payment, or the payment's client resource ID.
 
 The server will return the details of your payment:
 
@@ -471,7 +472,7 @@ Note that there can be a delay in processing a submitted payment; if the payment
 
 As well as sending payments, your application will need to know when incoming payments have been received.  To do this, you first make the following API call:
 
-__`GET /v1/accounts/{account}/payments?direction=incoming`__
+__`GET /v1/accounts/{:address}/payments?direction=incoming`__
 
 This will return the most recent incoming payments for your account, up to a maximum of 20.  You can process these historical payments if you want, and also retrieve more historical payments if you need to by using the `page` parameter, as described in the [Payment History](#payment-history) section below.
 
@@ -479,11 +480,11 @@ Regardless of what else you do with these payments, you need to extract the valu
 
 Your application should then periodically make the following API call:
 
-__`GET /v1/accounts/{account}/payments?direction=incoming&earliest_first=true&start_ledger={next_ledger}`__
+__`GET /v1/accounts/{:address}/payments?direction=incoming&earliest_first=true&start_ledger={next_ledger}`__
 
 This will return any _new_ payments which have been received, up to a maximum of 20.  You should process these incoming payments.  If you received a list of 20 payments, there may be more payments to be processed.  You should then use the `page` parameter to get the next chunk of 20 payments, like this:
 
-__`GET /v1/accounts/{account}/payments?direction=incoming&earliest_first=true&start_ledger={next_ledger}&page=2`__
+__`GET /v1/accounts/{:address}/payments?direction=incoming&earliest_first=true&start_ledger={next_ledger}&page=2`__
 
 Continue retrieving the payments, incrementing the `page` parameter each time, until there are no new incoming payments to be processed.
 
@@ -493,13 +494,11 @@ Once you have retrieved all the payments, you should update your `next_ledger` v
 
 Using this approach, you can regularly poll for new incoming payments, confident that no payments will be processed twice, and no incoming payments will be missed.
 
-# ACCOUNTS #
-
 ## Payment History ##
-<span></span>
-__`GET /v1/accounts/{account}/payments`__
 
-This API endpoint can be used to browse through an account's payment history.  The following query string parameters can be used to filter the list of returned payments:
+__`GET /v1/accounts/{:address}/payments`__
+
+This API endpoint can be used to browse through an account's payment history and also used to confirm specific payments after a payment has been submitted. The following query string parameters can be used to filter the list of returned payments:
 
 + `source_account` Filter the results to only include payments sent by the given account.
  
@@ -546,9 +545,13 @@ If the server returns fewer than `results_per_page` payments, then there are no 
 
 Note that the `ripple-rest` API has to retrieve the full list of payments from the server and then filter them before returning them back to the caller.  This means that there is no speed advantage to specifying more filter values.
 
+# ACCOUNTS #
+
+`ripple-rest` provides the ability to review and confirm on information regarding your Ripple account. You can view your current balances and settings, as well as the ability to set your account setting flags.
+
 ## Account Balances ##
 
-__`GET /v1/accounts/{account}/balances`__
+__`GET /v1/accounts/{:address}/balances`__
 
 Retrieve the current balances for the given Ripple account.
 
@@ -621,7 +624,11 @@ The following account settings are currently supported:
 
 + `Signers` This is not currently documented.
 
+## Updating Account Settings ##
+
 To change an account's settings, make an HTTP `POST` request to the above endpoint.  The request must have a content-type of `application/json`, and the body of the request should look like this:
+
+__`POST /v1/accounts/{account}/settings`__
 
 ```js
 {
@@ -632,6 +639,16 @@ To change an account's settings, make an HTTP `POST` request to the above endpoi
 ```
 
 The given settings will be updated.
+
+# TRUSTLINES #
+
+## Reviewing Trustlines ##
+
+__`GET /v1/account/{:address}/trustlines`__
+
+## Granting a Trustline ##
+
+__`POST /v1/account/{:address}/trustlines`__
 
 # RIPPLED SERVER STATUS #
 
@@ -694,16 +711,6 @@ If the server is not currently connected to the Ripple network, the following er
   "message": "ripple-rest is unable to connect to the specified rippled server, or the rippled server is unable to communicate with the rest of the Ripple Network. Please check your internet and rippled server settings and try again"
 }
 ```
-# TRUSTLINES #
-
-## Reviewing Trustlines ##
-
-__`GET /v1/account/{:address}/trustlines`__
-
-## Granting a Trustline ##
-
-__`POST /v1/account/{:address}/trustlines`__
-
 # UTILITIES #
 
 ## Retrieve Ripple Transaction ##
