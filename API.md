@@ -350,7 +350,9 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ### Preparing a Payment ###
 
-__`GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}`__
+```js
+GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}
+```
 
 To prepare a payment, you first make an HTTP `GET` call to the above endpoint.  This will generate a list of possible payments between the two parties for the desired amount, taking into account the established trustlines between the two parties for the currency being transferred.  You can then choose one of the returned payments, modify it if necessary (for example, to set slippage values or tags), and then submit the payment for processing.
 
