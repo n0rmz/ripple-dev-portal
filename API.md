@@ -353,15 +353,15 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ### Preparing a Payment ###
 
-`GET /v1/accounts/{account}/payments/paths/{dst_account}/{dst_amount}`
+`GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}`
 
 To prepare a payment, you first make an HTTP `GET` call to the above endpoint.  This will generate a list of possible payments between the two parties for the desired amount, taking into account the established trustlines between the two parties for the currency being transferred.  You can then choose one of the returned payments, modify it if necessary (for example, to set slippage values or tags), and then submit the payment for processing.
 
 The following parameters are required by this API endpoint:
 
-`account:` The Ripple address for the source account.
-`dst_account:` The Ripple address for the destination account.
-`dst_amount:` The amount to be sent to the destination account.  Note that this value uses `+` characters to separate the `value`, `currency` and `issuer` fields.  For XRP, the format is:
+`address:` The Ripple address for the source account.
+`destination_account:` The Ripple address for the destination account.
+`destination_amount:` The amount to be sent to the destination account.  Note that this value uses `+` characters to separate the `value`, `currency` and `issuer` fields.  For XRP, the format is:
 
 `0.1+XRP`
  
