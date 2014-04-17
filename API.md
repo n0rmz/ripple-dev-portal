@@ -45,15 +45,15 @@ Sending a payment involves three steps:
 
 3. Finally, you have to ___confirm___ that the payment has gone through by checking the payment's ___status___.
 
-Note that when you submit a payment for processing, you have to assign a unique ___client resource ID___ to that payment.  This is a string which uniquely identifies the payment, and ensures that you do not accidentally submit the same payment twice.  You can also use the client resource ID to retrieve a payment once it has been submitted.
+Note that when you submit a payment for processing, you have to assign a unique `client resource ID` to that payment.  This is a string which uniquely identifies the payment, and ensures that you do not accidentally submit the same payment twice.  You can also use the client resource ID to retrieve a payment once it has been submitted.
 
 ### Transaction Types ###
 
 The Ripple protocol supports multiple types of transactions other than just payments. Transactions are considered to be any changes to the database made on behalf of a Ripple Address. Transactions are first constructed and then submitted to the network. After transaction processing, meta data is associated with the transaction which itemizes the resulting changes to the ledger.
 
-+ `Payment` - Payment transactions is an authorized transfer of balance from one address to another.
++ Payment: Payment transactions is an authorized transfer of balance from one address to another.
 
-+ `Trustline` - Trustline transactions is an authorized grant of trust between two addresses.
++ Trustline: Trustline transactions is an authorized grant of trust between two addresses.
 
 ## Getting Started ##
 
