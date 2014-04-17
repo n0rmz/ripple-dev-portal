@@ -129,20 +129,20 @@ There are two different ways in which errors are returned by the `ripple-rest` A
 
 * Low-level errors are indicated by the server returning an appropriate HTTP status code.  The following status codes are currently supported:
 
-`Bad Request (400)`  
-`Method Not Accepted (404)`  
-`Gateway Timeout (502)`  
-`Bad Gateway (504)`
++ `Bad Request (400)`  
++ `Method Not Accepted (404)`  
++ `Gateway Timeout (502)`  
++ `Bad Gateway (504)`
 
 * Application-level errors are indicated by an `OK` (200) or `Accepted` (202) status code, where the body of the response is a JSON object with the following fields:
 
-`success`
++ `success:`
 This will be set to `false` if an error occurred.
 
-`error`
++ `error:`
 A short string identifying the error that occurred.
 
-`message`
++ `message:`
 A longer human-readable string explaining what went wrong.
 
 
