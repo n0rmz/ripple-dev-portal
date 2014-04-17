@@ -22,6 +22,10 @@ While there are different APIs that you can use, for example by accessing the `r
 * [`GET /v1/tx`](#retrieve-ripple-transaction)
 * [`GET /v1/uuid`](#create-client-resource-id)
 
+* [`POST /v1/payments`](#submitting-a-payment)
+* [`POST /v1/accounts/{:address}/settings`](#changing-account-settings)
+* [`POST /v1/accounts/{:address}/trustlines`](#granting-a-trustline)
+
 ## API Overview ##
 
 ### Ripple Concepts ###
