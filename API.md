@@ -14,6 +14,8 @@ While there are different APIs that you can use, for example by accessing the `r
 * [`GET /v1/accounts/{:address}/payments`](#confirming-a-payment) 
 * [`GET /v1/accounts/{:address}/balances`](#account-balances)
 * [`GET /v1/accounts/{:address}/settings`](#account-settings)
+* [`GET /v1/accounts/{:address}/trustlines`](#reviewing-trustlines)
+* [`POST /v1/accounts/{:address}/trustlines`](#granting-a-trustline)
 * [`GET /v1/server/connected`](#check-connection-state)
 * [`GET /v1/status`](#check-server-status)
 * [`GET /v1/tx`](#retrieve-ripple-transaction)
@@ -355,18 +357,18 @@ __GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_a
 
 To prepare a payment, you first make an HTTP `GET` call to the above endpoint.  This will generate a list of possible payments between the two parties for the desired amount, taking into account the established trustlines between the two parties for the currency being transferred.  You can then choose one of the returned payments, modify it if necessary (for example, to set slippage values or tags), and then submit the payment for processing.
 
-The following parameters are required by this API endpoint:
+The following URL parameters are required by this API endpoint:
 
-+ `address` The Ripple address for the source account.
-+ `destination_account` The Ripple address for the destination account.
-+ `destination_amount` The amount to be sent to the destination account.  Note that this value uses `+` characters to separate the `value`, `currency` and `issuer` fields.  
++ `address` *[required]* The Ripple address for the source account.
++ `destination_account` *[required]* The Ripple address for the destination account.
++ `destination_amount` *[required]* The amount to be sent to the destination account.  Note that this value uses `+` characters to separate the `value`, `currency` and `issuer` fields.  
 + For XRP, the format is: `0.1+XRP`
  
 + For other currencies, you need to include the Ripple address of the currency's issuer, like this: `0.1+USD+r...`
 
 Optionally, you can also include the following as a query string parameter:
 
-`source_currencies` A comma-separated list of source currencies.  This is used to filter the returned list of possible payments.  Each source currency can be specified either as a currency code (eg, `USD`), or as a currency code and issuer (eg, `USD+r...`).  If the issuer is not specified for a currency other than XRP, then the results will be limited to the specified currency, but any issuer for that currency will be included in the results.
+`source_currencies` *[optional]*A comma-separated list of source currencies.  This is used to filter the returned list of possible payments.  Each source currency can be specified either as a currency code (eg, `USD`), or as a currency code and issuer (eg, `USD+r...`).  If the issuer is not specified for a currency other than XRP, then the results will be limited to the specified currency, but any issuer for that currency will be included in the results.
 
 Note that this call is a wrapper around the [Ripple path-find](https://ripple.com/wiki/RPC_API#path_find) command, and returns an array of [`Payment`](#payment_object) objects, like this:
 
@@ -390,13 +392,13 @@ __`POST /v1/payments`__
 
 Before you can submit a payment, you will need to have three pieces of information:
 
-+ The [`Payment`](#payment_object) object to be submitted.
++ The [`Payment`](#payment_object) *[required]* object to be submitted.
 
-+ The ___secret___, or private key for your Ripple account.
++ The `secret` *[required]* or private key for your Ripple account.
 
 __DO NOT SUBMIT YOUR SECRET TO AN UNTRUSTED REST API SERVER__ -- this is the key to your account and your money. If you are using the test server provided, only use test accounts to submit payments.
  
-+ A ___client resource ID___ that will uniquely identify this payment.  This is a 36-character UUID (universally unique identifier) value which will uniquely identify this payment within the `ripple-rest` API.  Note that you can use the [`GET /v1/uuid`](#calculating_a_uuid) endpoint to calculate a UUID value if you do not have a UUID generator readily available.
++ A `client_resource_id` *[required]* that will uniquely identify this payment.  This is a 36-character UUID (universally unique identifier) value which will uniquely identify this payment within the `ripple-rest` API.  Note that you can use the [`GET /v1/uuid`](#calculating_a_uuid) endpoint to calculate a UUID value if you do not have a UUID generator readily available.
 
 This HTTP `POST` request must have a content-type of `application/json`, and the body of the request should look like this:
 
@@ -692,6 +694,15 @@ If the server is not currently connected to the Ripple network, the following er
   "message": "ripple-rest is unable to connect to the specified rippled server, or the rippled server is unable to communicate with the rest of the Ripple Network. Please check your internet and rippled server settings and try again"
 }
 ```
+# TRUSTLINES #
+
+## Reviewing Trustlines ##
+
+__`GET /v1/account/{:address}/trustlines`__
+
+## Granting a Trustline ##
+
+__`POST /v1/account/{:address}/trustlines`__
 
 # UTILITIES #
 
