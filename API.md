@@ -10,17 +10,15 @@ While there are different APIs that you can use, for example by accessing the `r
 ## Available API Routes ##
 
 * [`GET /v1/accounts/{:address}/payments/paths`](#preparing-a-payment)
-* [`POST /v1/payments`](#submitting-a-payment)
 * [`GET /v1/accounts/{:address}/payments`](#confirming-a-payment) 
 * [`GET /v1/accounts/{:address}/balances`](#account-balances)
 * [`GET /v1/accounts/{:address}/settings`](#account-settings)
-* [`POST /v1/accounts/{:address}/settings`](#changing-account-settings)
 * [`GET /v1/accounts/{:address}/trustlines`](#reviewing-trustlines)
-* [`POST /v1/accounts/{:address}/trustlines`](#granting-a-trustline)
 * [`GET /v1/server/connected`](#check-connection-state)
 * [`GET /v1/status`](#check-server-status)
 * [`GET /v1/tx`](#retrieve-ripple-transaction)
 * [`GET /v1/uuid`](#create-client-resource-id)
+
 
 * [`POST /v1/payments`](#submitting-a-payment)
 * [`POST /v1/accounts/{:address}/settings`](#changing-account-settings)
