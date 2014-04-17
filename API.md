@@ -72,7 +72,7 @@ As a programmer, you will also need to have a suitable HTTP client library that 
 
 Let's start by using `curl` to see if the `ripple-rest` API is currently running.  Type the following into a terminal window:
 
-<a href="https://[ripple-rest-server]/v1/status" target="_blank">`curl https://[ripple-rest-server]/v1/status`</a>
+`curl https://[ripple-rest-server]/v1/status`
 
 After a short delay, the following response should be displayed:
 
@@ -127,14 +127,14 @@ The `ripple-rest` API conforms to the following general behavior for a web inter
 
 There are two different ways in which errors are returned by the `ripple-rest` API:
 
-* Low-level errors are indicated by the server returning an appropriate HTTP status code.  The following status codes are currently supported:
+Low-level errors are indicated by the server returning an appropriate HTTP status code.  The following status codes are currently supported:
 
 + `Bad Request (400)`  
 + `Method Not Accepted (404)`  
 + `Gateway Timeout (502)`  
 + `Bad Gateway (504)`
 
-* Application-level errors are indicated by an `OK` (200) or `Accepted` (202) status code, where the body of the response is a JSON object with the following fields:
+Application-level errors are indicated by an `OK` (200) or `Accepted` (202) status code, where the body of the response is a JSON object with the following fields:
 
 + `success:`
 This will be set to `false` if an error occurred.
