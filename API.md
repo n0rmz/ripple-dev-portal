@@ -9,11 +9,11 @@ While there are different APIs that you can use, for example by accessing the `r
 
 ## Available API Routes ##
 
-* [`GET /v1/accounts/{address}/payments/paths`](#preparing-a-payment)
+* [`GET /v1/accounts/{:address}/payments/paths`](#preparing-a-payment)
 * [`POST /v1/payments`](#submitting-a-payment)
-* [`GET /v1/accounts/{address}/payments`](#confirming-a-payment) 
-* [`GET /v1/accounts/{address}/balances`](#account-balances)
-* [`GET /v1/accounts/{address}/settings`](#account-settings)
+* [`GET /v1/accounts/{:address}/payments`](#confirming-a-payment) 
+* [`GET /v1/accounts/{:address}/balances`](#account-balances)
+* [`GET /v1/accounts/{:address}/settings`](#account-settings)
 * [`GET /v1/server/connected`](#check-connection-state)
 * [`GET /v1/status`](#check-server-status)
 * [`GET /v1/tx`](#retrieve-ripple-transaction)
@@ -353,7 +353,7 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ### Preparing a Payment ###
 
-`GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}`
+__GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}__
 
 To prepare a payment, you first make an HTTP `GET` call to the above endpoint.  This will generate a list of possible payments between the two parties for the desired amount, taking into account the established trustlines between the two parties for the currency being transferred.  You can then choose one of the returned payments, modify it if necessary (for example, to set slippage values or tags), and then submit the payment for processing.
 
@@ -391,17 +391,17 @@ __NOTE:__ This command may be quite slow. If the command times out, please try i
 
 ### Submitting a Payment ###
 
-> __`POST /v1/payments`__
+__`POST /v1/payments`__
 
 Before you can submit a payment, you will need to have three pieces of information:
 
-> * The [`Payment`](#payment_object) object to be submitted.
-> 
-> * The ___secret___, or private key for your Ripple account.
->
-> > > __DO NOT SUBMIT YOUR SECRET TO AN UNTRUSTED REST API SERVER__ -- this is the key to your account and your money. If you are using the test server provided, only use test accounts to submit payments.
-> 
-> * A ___client resource ID___ that will uniquely identify this payment.  This is a 36-character UUID (universally unique identifier) value which will uniquely identify this payment within the `ripple-rest` API.  Note that you can use the [`GET /v1/uuid`](#calculating_a_uuid) endpoint to calculate a UUID value if you do not have a UUID generator readily available.
++ The [`Payment`](#payment_object) object to be submitted.
+
++ The ___secret___, or private key for your Ripple account.
+
+__DO NOT SUBMIT YOUR SECRET TO AN UNTRUSTED REST API SERVER__ -- this is the key to your account and your money. If you are using the test server provided, only use test accounts to submit payments.
+ 
++ A ___client resource ID___ that will uniquely identify this payment.  This is a 36-character UUID (universally unique identifier) value which will uniquely identify this payment within the `ripple-rest` API.  Note that you can use the [`GET /v1/uuid`](#calculating_a_uuid) endpoint to calculate a UUID value if you do not have a UUID generator readily available.
 
 This HTTP `POST` request must have a content-type of `application/json`, and the body of the request should look like this:
 
@@ -441,7 +441,7 @@ Note that payments cannot be cancelled once they have been submitted.
 
 ### Confirming a Payment ###
 
-> __`GET /v1/accounts/{account}/payments/{transaction_id}`__
+__`GET /v1/accounts/{account}/payments/{transaction_id}`__
 
 To confirm that your payment has been submitted successfully, you can call this API endpoint.  The `transaction_id` value can either be the transaction hash for the desired payment, or the payment's client resource ID.
 
@@ -474,7 +474,7 @@ Note that there can be a delay in processing a submitted payment; if the payment
 
 As well as sending payments, your application will need to know when incoming payments have been received.  To do this, you first make the following API call:
 
-> __`GET /v1/accounts/{account}/payments?direction=incoming`__
+__`GET /v1/accounts/{account}/payments?direction=incoming`__
 
 This will return the most recent incoming payments for your account, up to a maximum of 20.  You can process these historical payments if you want, and also retrieve more historical payments if you need to by using the `page` parameter, as described in the [Payment History](#payment-history) section below.
 
@@ -482,15 +482,15 @@ Regardless of what else you do with these payments, you need to extract the valu
 
 Your application should then periodically make the following API call:
 
-> __`GET /v1/accounts/{account}/payments?direction=incoming&earliest_first=true&start_ledger={next_ledger}`__
+__`GET /v1/accounts/{account}/payments?direction=incoming&earliest_first=true&start_ledger={next_ledger}`__
 
 This will return any _new_ payments which have been received, up to a maximum of 20.  You should process these incoming payments.  If you received a list of 20 payments, there may be more payments to be processed.  You should then use the `page` parameter to get the next chunk of 20 payments, like this:
 
-> __`GET /v1/accounts/{account}/payments?direction=incoming&earliest_first=true&start_ledger={next_ledger}&page=2`__
+__`GET /v1/accounts/{account}/payments?direction=incoming&earliest_first=true&start_ledger={next_ledger}&page=2`__
 
 Continue retrieving the payments, incrementing the `page` parameter each time, until there are no new incoming payments to be processed.
 
-> __Note:__ We use the `earliest_first` parameter to retrieve the payments in ascending date order (ie, the oldest payment first).  This ensures that if any more payments come in after the first API call with `start_ledger` set to `next_ledger`, you won't miss any payments.  If you use the `page` parameter while retrieving the payments in descending order (ie, the most recent payment first), you may miss one or more payments while scanning through the pages.
+__Note:__ We use the `earliest_first` parameter to retrieve the payments in ascending date order (ie, the oldest payment first).  This ensures that if any more payments come in after the first API call with `start_ledger` set to `next_ledger`, you won't miss any payments.  If you use the `page` parameter while retrieving the payments in descending order (ie, the most recent payment first), you may miss one or more payments while scanning through the pages.
 
 Once you have retrieved all the payments, you should update your `next_ledger` value by once again taking the value of the `ledger` field from the most recent (ie, last) payment received, converting this value to an integer and incrementing it by one.  This will give you the `next_ledger` value to use the next time you poll for payments.
 
@@ -500,49 +500,29 @@ Using this approach, you can regularly poll for new incoming payments, confident
 
 ## Payment History ##
 <span></span>
-> __`GET /v1/accounts/{account}/payments`__
+__`GET /v1/accounts/{account}/payments`__
 
 This API endpoint can be used to browse through an account's payment history.  The following query string parameters can be used to filter the list of returned payments:
 
-> `source_account`
-> 
-> > Filter the results to only include payments sent by the given account.
-> 
-> `destination_account`
-> 
-> > Filter the results to only include payments received by the given account.
-> 
-> `exclude_failed`
-> 
-> > If set to `true`, the results will only include payments which were successfully validated and written into the ledger.  Otherwise, failed payments will be included.
-> 
-> `direction`
-> 
-> > Limit the results to only include the given type of payments.  The following direction values are currently supported:
-> > 
-> > > `incoming`  
-> > > `outgoing`  
-> > > `pending`
-> 
-> `earliest_first`
-> 
-> > If set to `true`, the payments will be returned in ascending date order.  Otherwise, the payments will be returned in descending date order (ie, the most recent payment will be returned first).  Defaults to `false`.
-> 
-> `start_ledger`
-> 
-> > The index for the starting ledger.  If `earliest_first` is `true`, this will be the oldest ledger to be queried; otherwise, it will be the most recent ledger.  Defaults to the first ledger in the `rippled` server's database.
-> 
-> `end_ledger`
-> 
-> > The index for the ending ledger.  If `earliest_first` is `true`, this will be the most recent ledger to be queried; otherwise, it will be the oldest ledger.  Defaults to the most recent ledger in the `rippled` server's database.
-> 
-> `results_per_page`
-> 
-> > The maximum number of payments to be returned at once.  Defaults to 20.
-> 
-> `page`
-> 
-> > The page number to be returned.  The first page of results will have page number `1`, the second page will have page number `2`, and so on.  Defaults to `1`.
++ `source_account:` Filter the results to only include payments sent by the given account.
+ 
++ `destination_account:` Filter the results to only include payments received by the given account.
+
++ `exclude_failed:` If set to `true`, the results will only include payments which were successfully validated and written into the ledger.  Otherwise, failed payments will be included.
+
++ `direction:` Limit the results to only include the given type of payments.  The following direction values are currently supported: 
+ + `incoming` 
+ + `outgoing` 
+ + `pending` 
+ + `earliest_first:` If set to `true`, the payments will be returned in ascending date order.  Otherwise, the payments will be returned in descending date order (ie, the most recent payment will be returned first).  Defaults to `false`.
+
++ `start_ledger:` The index for the starting ledger.  If `earliest_first` is `true`, this will be the oldest ledger to be queried; otherwise, it will be the most recent ledger.  Defaults to the first ledger in the `rippled` server's database.
+
++ `end_ledger:` The index for the ending ledger.  If `earliest_first` is `true`, this will be the most recent ledger to be queried; otherwise, it will be the oldest ledger.  Defaults to the most recent ledger in the `rippled` server's database.
+
++ `results_per_page:` The maximum number of payments to be returned at once.  Defaults to 20.
+ 
++ `page:` The page number to be returned.  The first page of results will have page number `1`, the second page will have page number `2`, and so on.  Defaults to `1`.
 
 Upon completion, the server will return a JSON object which looks like the following:
 
@@ -570,8 +550,8 @@ If the server returns fewer than `results_per_page` payments, then there are no 
 Note that the `ripple-rest` API has to retrieve the full list of payments from the server and then filter them before returning them back to the caller.  This means that there is no speed advantage to specifying more filter values.
 
 ## Account Balances ##
-<span></span>
-> __`GET /v1/accounts/{account}/balances`__
+
+__`GET /v1/accounts/{account}/balances`__
 
 Retrieve the current balances for the given Ripple account.
 
@@ -602,7 +582,7 @@ There will be one entry in the `balances` array for the account's XRP balance, a
 
 You can retrieve an account's settings by using the following endpoint:
 
-> __`GET /v1/accounts/{account}/settings`__
+__`GET /v1/accounts/{account}/settings`__
 
 The server will return a list of the current settings in force for the given account, in the form of a JSON object:
 
@@ -617,59 +597,32 @@ The server will return a list of the current settings in force for the given acc
 
 The following account settings are currently supported:
 
-> `PasswordSpent`
-> 
-> > `true` if the password has been "spent", else `false`.
-> > 
-> > > NOTE: This is not currently listed in the account settings schema, so I'm not sure what this setting is used for.
-> 
-> `RequireDestTag`
->
-> > If this is set to `true`, incoming payments will only be validated if they include a `destination_tag` value.  Note that this is used primarily by gateways that operate exclusively with hosted wallets.
-> 
-> `RequireAuth`
-> 
-> > If this is set to `true`, incoming trustlines will only be validated if this account first creates a trustline to the counterparty with the authorized flag set to true.  This may be used by gateways to prevent accounts unknown to them from holding currencies they issue.
-> 
-> `DisallowXRP`
-> 
-> > If this is set to `true`, payments in XRP will not be allowed.
-> 
-> `DisableMaster`
-> 
-> > This is not currently documented.
-> 
-> `Sequence`
-> 
-> > This is not currently documented.
-> 
-> `EmailHash`
-> 
-> > The MD5 128-bit hash of the account owner's email address, if known.
-> 
-> `WalletLocator`
-> 
-> > This is not currently documented.
-> 
-> `WalletSize`
-> 
-> > This is not currently documented.
-> 
-> `MessageKey`
-> 
-> > An optional public key, represented as a hex string, that can be used to allow others to send encrypted messages to the account owner.
-> 
-> `Domain`
-> 
-> > The domain name associated with this account.
-> 
-> `TransferRate`
-> 
-> > The rate charged each time a holder of currency issued by this account transfers some funds.  The default rate is `"1.0"; a rate of `"1.01"` is a 1% charge on top of the amount being transferred.  Up to nine decimal places are supported.
-> 
-> `Signers`
-> 
-> > This is not currently documented.
++ `PasswordSpent:` `true` if the password has been "spent", else `false`. 
+<!--NOTE: This is not currently listed in the account settings schema, so I'm not sure what this setting is used for.
+--> 
++ `RequireDestTag:` If this is set to `true`, incoming payments will only be validated if they include a `destination_tag` value.  Note that this is used primarily by gateways that operate exclusively with hosted wallets.
+
++ `RequireAuth:` If this is set to `true`, incoming trustlines will only be validated if this account first creates a trustline to the counterparty with the authorized flag set to true.  This may be used by gateways to prevent accounts unknown to them from holding currencies they issue.
+
++ `DisallowXRP:` If this is set to `true`, payments in XRP will not be allowed.
+ 
++ `DisableMaster:` This is not currently documented.
+
++ `Sequence:` This is not currently documented.
+
++ `EmailHash:` The MD5 128-bit hash of the account owner's email address, if known.
+
++ `WalletLocator:` This is not currently documented.
+
++ `WalletSize:` This is not currently documented.
+ 
++ `MessageKey:` An optional public key, represented as a hex string, that can be used to allow others to send encrypted messages to the account owner.
+
++ `Domain:` The domain name associated with this account.
+ 
++ `TransferRate:` The rate charged each time a holder of currency issued by this account transfers some funds.  The default rate is `"1.0"; a rate of `"1.01"` is a 1% charge on top of the amount being transferred.  Up to nine decimal places are supported.
+
++ `Signers:` This is not currently documented.
 
 To change an account's settings, make an HTTP `POST` request to the above endpoint.  The request must have a content-type of `application/json`, and the body of the request should look like this:
 
@@ -689,7 +642,7 @@ The following two endpoints can be used to check if the `ripple-rest` API is cur
 
 ## Check Connection State ##
 <span></span>
-> __`GET /v1/server/connected`__
+__`GET /v1/server/connected`__
 
 Checks to see if the `ripple-rest` API is currently connected to a `rippled` server, and is ready to be used.  This provides a quick and easy way to check to see if the API is up and running, before attempting to process transactions.
 
@@ -697,7 +650,7 @@ No additional parameters are required.  Upon completion, the server will return 
 
 ## Get Server Status ##
 <span></span>
-> __`GET /v1/server`__
+__`GET /v1/server`__
 
 Retrieve information about the current status of the `ripple-rest` API and the `rippled` server it is connected to.
 
@@ -751,7 +704,7 @@ If the server is not currently connected to the Ripple network, the following er
 
 While the `ripple-rest` API is a high-level API built on top of the `rippled` server, there are times when you may need to access an underlying Ripple transaction rather than dealing with the `ripple-rest` API directly.  When you need to do this, you can retrieve the standard Ripple transaction by using the following endpoint:
 
-> __`GET /v1/transactions/{tx_hash}`__
+__`GET /v1/transactions/{tx_hash}`__
 
 This retrieves the underlying Ripple transaction with the given transaction hash value.  Upon completion, the server will return following JSON object:
 
@@ -777,7 +730,7 @@ If the given transaction could not be found in the `rippled` server's historical
 
 ## Create Client Resource ID ##
 <span></span>
-> __`GET /v1/uuid`__
+__`GET /v1/uuid`__
 
 This endpoint creates a universally unique identifier (UUID) value which can be used to calculate a client resource ID for a payment.  This can be useful if the application does not have a UUID generator handy.
 
