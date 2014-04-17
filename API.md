@@ -129,21 +129,18 @@ There are two different ways in which errors are returned by the `ripple-rest` A
 
 Low-level errors are indicated by the server returning an appropriate HTTP status code.  The following status codes are currently supported:
 
-+ `Bad Request (400):` The JSON body submitted is malformed or invalid.  
-+ `Method Not Accepted (404):` The endpoint is not allowed.  
-+ `Gateway Timeout (502):` The rippled server is taking to long to respond.  
-+ `Bad Gateway (504):` The rippled server is non-responsive.
++ `Bad Request (400)` The JSON body submitted is malformed or invalid.  
++ `Method Not Accepted (404)` The endpoint is not allowed.  
++ `Gateway Timeout (502)` The rippled server is taking to long to respond.  
++ `Bad Gateway (504)` The rippled server is non-responsive.
 
 Application-level errors are described further in the body of the JSON response with the following fields:
 
-+ `success:`
-This will be set to `false` if an error occurred.
++ `success` This will be set to `false` if an error occurred.
 
-+ `error:`
-A short string identifying the error that occurred.
++ `error` A short string identifying the error that occurred.
 
-+ `message:`
-A longer human-readable string explaining what went wrong.
++ `message` A longer human-readable string explaining what went wrong.
 
 
 ### API Objects ###
@@ -353,25 +350,22 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ### Preparing a Payment ###
 
-__GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}__
+__`GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}`__
 
 To prepare a payment, you first make an HTTP `GET` call to the above endpoint.  This will generate a list of possible payments between the two parties for the desired amount, taking into account the established trustlines between the two parties for the currency being transferred.  You can then choose one of the returned payments, modify it if necessary (for example, to set slippage values or tags), and then submit the payment for processing.
 
 The following parameters are required by this API endpoint:
 
-`address:` The Ripple address for the source account.
-`destination_account:` The Ripple address for the destination account.
-`destination_amount:` The amount to be sent to the destination account.  Note that this value uses `+` characters to separate the `value`, `currency` and `issuer` fields.  For XRP, the format is:
-
-`0.1+XRP`
++ `address` The Ripple address for the source account.
++ `destination_account` The Ripple address for the destination account.
++ `destination_amount` The amount to be sent to the destination account.  Note that this value uses `+` characters to separate the `value`, `currency` and `issuer` fields.  
++ For XRP, the format is: `0.1+XRP`
  
-For other currencies, you need to include the Ripple address of the currency's issuer, like this:  
-
-`0.1+USD+r...`
++ For other currencies, you need to include the Ripple address of the currency's issuer, like this: `0.1+USD+r...`
 
 Optionally, you can also include the following as a query string parameter:
 
-`source_currencies:` A comma-separated list of source currencies.  This is used to filter the returned list of possible payments.  Each source currency can be specified either as a currency code (eg, `USD`), or as a currency code and issuer (eg, `USD+r...`).  If the issuer is not specified for a currency other than XRP, then the results will be limited to the specified currency, but any issuer for that currency will be included in the results.
+`source_currencies` A comma-separated list of source currencies.  This is used to filter the returned list of possible payments.  Each source currency can be specified either as a currency code (eg, `USD`), or as a currency code and issuer (eg, `USD+r...`).  If the issuer is not specified for a currency other than XRP, then the results will be limited to the specified currency, but any issuer for that currency will be included in the results.
 
 Note that this call is a wrapper around the [Ripple path-find](https://ripple.com/wiki/RPC_API#path_find) command, and returns an array of [`Payment`](#payment_object) objects, like this:
 
@@ -504,25 +498,25 @@ __`GET /v1/accounts/{account}/payments`__
 
 This API endpoint can be used to browse through an account's payment history.  The following query string parameters can be used to filter the list of returned payments:
 
-+ `source_account:` Filter the results to only include payments sent by the given account.
++ `source_account` Filter the results to only include payments sent by the given account.
  
-+ `destination_account:` Filter the results to only include payments received by the given account.
++ `destination_account` Filter the results to only include payments received by the given account.
 
-+ `exclude_failed:` If set to `true`, the results will only include payments which were successfully validated and written into the ledger.  Otherwise, failed payments will be included.
++ `exclude_failed` If set to `true`, the results will only include payments which were successfully validated and written into the ledger.  Otherwise, failed payments will be included.
 
-+ `direction:` Limit the results to only include the given type of payments.  The following direction values are currently supported: 
++ `direction` Limit the results to only include the given type of payments.  The following direction values are currently supported: 
  + `incoming` 
  + `outgoing` 
  + `pending` 
- + `earliest_first:` If set to `true`, the payments will be returned in ascending date order.  Otherwise, the payments will be returned in descending date order (ie, the most recent payment will be returned first).  Defaults to `false`.
+ + `earliest_first` If set to `true`, the payments will be returned in ascending date order.  Otherwise, the payments will be returned in descending date order (ie, the most recent payment will be returned first).  Defaults to `false`.
 
-+ `start_ledger:` The index for the starting ledger.  If `earliest_first` is `true`, this will be the oldest ledger to be queried; otherwise, it will be the most recent ledger.  Defaults to the first ledger in the `rippled` server's database.
++ `start_ledger` The index for the starting ledger.  If `earliest_first` is `true`, this will be the oldest ledger to be queried; otherwise, it will be the most recent ledger.  Defaults to the first ledger in the `rippled` server's database.
 
-+ `end_ledger:` The index for the ending ledger.  If `earliest_first` is `true`, this will be the most recent ledger to be queried; otherwise, it will be the oldest ledger.  Defaults to the most recent ledger in the `rippled` server's database.
++ `end_ledger` The index for the ending ledger.  If `earliest_first` is `true`, this will be the most recent ledger to be queried; otherwise, it will be the oldest ledger.  Defaults to the most recent ledger in the `rippled` server's database.
 
-+ `results_per_page:` The maximum number of payments to be returned at once.  Defaults to 20.
++ `results_per_page` The maximum number of payments to be returned at once.  Defaults to 20.
  
-+ `page:` The page number to be returned.  The first page of results will have page number `1`, the second page will have page number `2`, and so on.  Defaults to `1`.
++ `page` The page number to be returned.  The first page of results will have page number `1`, the second page will have page number `2`, and so on.  Defaults to `1`.
 
 Upon completion, the server will return a JSON object which looks like the following:
 
@@ -597,32 +591,32 @@ The server will return a list of the current settings in force for the given acc
 
 The following account settings are currently supported:
 
-+ `PasswordSpent:` `true` if the password has been "spent", else `false`. 
++ `PasswordSpent` `true` if the password has been "spent", else `false`. 
 <!--NOTE: This is not currently listed in the account settings schema, so I'm not sure what this setting is used for.
 --> 
-+ `RequireDestTag:` If this is set to `true`, incoming payments will only be validated if they include a `destination_tag` value.  Note that this is used primarily by gateways that operate exclusively with hosted wallets.
++ `RequireDestTag` If this is set to `true`, incoming payments will only be validated if they include a `destination_tag` value.  Note that this is used primarily by gateways that operate exclusively with hosted wallets.
 
-+ `RequireAuth:` If this is set to `true`, incoming trustlines will only be validated if this account first creates a trustline to the counterparty with the authorized flag set to true.  This may be used by gateways to prevent accounts unknown to them from holding currencies they issue.
++ `RequireAuth` If this is set to `true`, incoming trustlines will only be validated if this account first creates a trustline to the counterparty with the authorized flag set to true.  This may be used by gateways to prevent accounts unknown to them from holding currencies they issue.
 
-+ `DisallowXRP:` If this is set to `true`, payments in XRP will not be allowed.
++ `DisallowXRP` If this is set to `true`, payments in XRP will not be allowed.
  
-+ `DisableMaster:` This is not currently documented.
++ `DisableMaster` This is not currently documented.
 
-+ `Sequence:` This is not currently documented.
++ `Sequence` This is not currently documented.
 
-+ `EmailHash:` The MD5 128-bit hash of the account owner's email address, if known.
++ `EmailHash` The MD5 128-bit hash of the account owner's email address, if known.
 
-+ `WalletLocator:` This is not currently documented.
++ `WalletLocator` This is not currently documented.
 
-+ `WalletSize:` This is not currently documented.
++ `WalletSize` This is not currently documented.
  
-+ `MessageKey:` An optional public key, represented as a hex string, that can be used to allow others to send encrypted messages to the account owner.
++ `MessageKey` An optional public key, represented as a hex string, that can be used to allow others to send encrypted messages to the account owner.
 
-+ `Domain:` The domain name associated with this account.
++ `Domain` The domain name associated with this account.
  
-+ `TransferRate:` The rate charged each time a holder of currency issued by this account transfers some funds.  The default rate is `"1.0"; a rate of `"1.01"` is a 1% charge on top of the amount being transferred.  Up to nine decimal places are supported.
++ `TransferRate` The rate charged each time a holder of currency issued by this account transfers some funds.  The default rate is `"1.0"; a rate of `"1.01"` is a 1% charge on top of the amount being transferred.  Up to nine decimal places are supported.
 
-+ `Signers:` This is not currently documented.
++ `Signers` This is not currently documented.
 
 To change an account's settings, make an HTTP `POST` request to the above endpoint.  The request must have a content-type of `application/json`, and the body of the request should look like this:
 
