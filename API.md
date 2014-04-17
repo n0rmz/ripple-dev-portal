@@ -350,7 +350,7 @@ If there are no new notifications, the empty `Notification` object will be retur
 
 ### Preparing a Payment ###
 
-```js
+```
 GET /v1/accounts/{account}/payments/paths/{destination_account}/{destination_amount}
 ```
 
