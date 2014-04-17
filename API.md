@@ -68,9 +68,9 @@ The Ripple protocol supports multiple types of transactions other than just paym
 
 ### Setup ###
 
-Before you can use the `ripple-rest` API, you will need to have two things:
+Before you can use the `ripple-rest` API, you will need to have three things:
 
-* Installed version of `ripple-rest` running locally or remotely. Instructions on installing `ripple-rest` can be found in the readme.md file in the Github Repository <a href="https://github.com/ripple/ripple-rest" target="_blank">here</a>.
+ * Installed version of `ripple-rest` running locally or remotely. Instructions on installing `ripple-rest` can be found in the readme.md file in the Github Repository <a href="https://github.com/ripple/ripple-rest" target="_blank">here</a>.
 
  * An activated Ripple account.  If you don't have a Ripple account, you can use the Ripple web client to create one, as described in the <a href="https://ripple.com/wiki/Client_Manual" target="_blank">Client Manual</a>.  Make sure you have a copy of the Ripple address for your account; the address can be found by clicking on the __Receive__ tab in the web client.
  
