@@ -1,26 +1,22 @@
 # INTRODUCTION #
 
-## Ripple-REST API (BETA) ##
-
-`ripple-rest` API is currently in BETA and subject to multiple changes and iterations as it is being finalized. Please double check with the <a href="https://github.com/ripple/ripple-rest" target="_blank">`ripple-rest`</a> github repo for the most up-to-date versions and documentation. Feel free to poke around the branches to see what we're working on changing as well.
+## Ripple-REST API ##
 
 The `ripple-rest` API makes it easy to access the Ripple system via a RESTful web interface.  In this section, we will cover the concepts you need to understand, and get you started accessing the API and learning how to use it.
 
 While there are different APIs that you can use, for example by accessing the `rippled` server directly via a web socket, this documentation focuses on the `ripple-rest` API as this is the high-level API recommended for working with the Ripple system.
 
-**The test version of the `ripple-rest` server has been temporarily taken down to enhance security around a sandboxed environment. We encourage you to install a local version of `ripple-rest` to test for the meantime. Instructions can be found <a href="https://github.com/ripple/ripple-rest" target="_blank">here</a>**
 
 ## Available API Routes ##
 
-* [`GET /v1/accounts/{account}/payments/paths/{dst_account}/{dst_amount}`](#preparing-a-payment)
+* [`GET /v1/accounts/{address}/payments/paths`](#preparing-a-payment)
 * [`POST /v1/payments`](#submitting-a-payment)
-* [`GET /v1/accounts/{account}/payments/{transaction_id}`](#confirming-a-payment) 
-* [`GET /v1/accounts/{account}/payments`](#payment-history)
-* [`GET /v1/accounts/{account}/balances`](#account-balances)
-* [`GET /v1/accounts/{account}/settings`](#account-settings)
+* [`GET /v1/accounts/{address}/payments`](#confirming-a-payment) 
+* [`GET /v1/accounts/{address}/balances`](#account-balances)
+* [`GET /v1/accounts/{address}/settings`](#account-settings)
 * [`GET /v1/server/connected`](#check-connection-state)
 * [`GET /v1/status`](#check-server-status)
-* [`GET /v1/transactions/{tx_hash}`](#retrieve-ripple-transaction)
+* [`GET /v1/tx`](#retrieve-ripple-transaction)
 * [`GET /v1/uuid`](#create-client-resource-id)
 
 ## API Overview ##
@@ -133,24 +129,21 @@ There are two different ways in which errors are returned by the `ripple-rest` A
 
 * Low-level errors are indicated by the server returning an appropriate HTTP status code.  The following status codes are currently supported:
 
-> > Bad Request (400)  
-> > Method Not Accepted (404)  
-> > Gateway Timeout (502)  
-> > Bad Gateway (504)
+`Bad Request (400)`  
+`Method Not Accepted (404)`  
+`Gateway Timeout (502)`  
+`Bad Gateway (504)`
 
 * Application-level errors are indicated by an `OK` (200) or `Accepted` (202) status code, where the body of the response is a JSON object with the following fields:
 
-> > `success`
-> > 
-> > > This will be set to `false` if an error occurred.
-> > 
-> > `error`
-> > 
-> > > A short string identifying the error that occurred.
-> > 
-> > `message`
-> > 
-> > > A longer human-readable string explaining what went wrong.
+`success`
+This will be set to `false` if an error occurred.
+
+`error`
+A short string identifying the error that occurred.
+
+`message`
+A longer human-readable string explaining what went wrong.
 
 
 ### API Objects ###
