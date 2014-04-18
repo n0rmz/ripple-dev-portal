@@ -18,6 +18,7 @@ Older versions of the documentation will archived <a href="https://github.com/ri
 * [`GET /v1/accounts/{:address}/balances`](#account-balances)
 * [`GET /v1/accounts/{:address}/settings`](#account-settings)
 * [`GET /v1/accounts/{:address}/trustlines`](#reviewing-trustlines)
+* [`GET /v1/accounts/{:address}/notifications`](#checking-notifications)
 * [`GET /v1/server/connected`](#check-connection-state)
 * [`GET /v1/status`](#check-server-status)
 * [`GET /v1/tx`](#retrieve-ripple-transaction)
@@ -478,7 +479,11 @@ Note that there can be a delay in processing a submitted payment; if the payment
 
 As well as sending payments, your application will need to know when incoming payments have been received.  To do this, you first make the following API call:
 
-__`GET /v1/accounts/{:address}/payments?direction=incoming`__
+__`GET /v1/accounts/{:address}/payments`__
+
+This will return the most recent payments (both incoming and outgoing), up to a maximum of 20.
+
+<!-- __`GET /v1/accounts/{:address}/payments?direction=incoming`__
 
 This will return the most recent incoming payments for your account, up to a maximum of 20.  You can process these historical payments if you want, and also retrieve more historical payments if you need to by using the `page` parameter, as described in the [Payment History](#payment-history) section below.
 
@@ -499,8 +504,9 @@ __Note:__ We use the `earliest_first` parameter to retrieve the payments in asce
 Once you have retrieved all the payments, you should update your `next_ledger` value by once again taking the value of the `ledger` field from the most recent (ie, last) payment received, converting this value to an integer and incrementing it by one.  This will give you the `next_ledger` value to use the next time you poll for payments.
 
 Using this approach, you can regularly poll for new incoming payments, confident that no payments will be processed twice, and no incoming payments will be missed.
+-->
 
-## Payment History ##
+<!-- ## Payment History ##
 
 __`GET /v1/accounts/{:address}/payments`__
 
@@ -550,6 +556,8 @@ Upon completion, the server will return a JSON object which looks like the follo
 If the server returns fewer than `results_per_page` payments, then there are no more pages of results to be returned.  Otherwise, increment the page number and re-issue the query to get the next page of results.
 
 Note that the `ripple-rest` API has to retrieve the full list of payments from the server and then filter them before returning them back to the caller.  This means that there is no speed advantage to specifying more filter values.
+
+-->
 
 # ACCOUNTS #
 
