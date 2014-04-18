@@ -20,7 +20,7 @@ Older versions of the documentation will archived <a href="https://github.com/ri
 * [`GET /v1/accounts/{:address}/trustlines`](#reviewing-trustlines)
 * [`GET /v1/accounts/{:address}/notifications`](#checking-notifications)
 * [`GET /v1/server/connected`](#check-connection-state)
-* [`GET /v1/server`](#check-server-status)
+* [`GET /v1/server`](#get-server-status)
 * [`GET /v1/tx`](#retrieve-ripple-transaction)
 * [`GET /v1/uuid`](#create-client-resource-id)
 
