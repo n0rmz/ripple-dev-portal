@@ -1,14 +1,14 @@
 # INTRODUCTION #
 
+`ripple-rest : v1.0`
+
 ## Ripple-REST API ##
 
 The `ripple-rest` API makes it easy to access the Ripple system via a RESTful web interface.  In this section, we will cover the concepts you need to understand, and get you started accessing the API and learning how to use it.
 
-While there are different APIs that you can use, for example by accessing the `rippled` server directly via a web socket, this documentation focuses on the `ripple-rest` API as this is the high-level API recommended for working with the Ripple system.
+While there are other API's to use with Ripple (i.e. Accessing the `rippled` server directly via a web socket), this documentation is meant only for the `ripple-rest` API as this is the high-level API recommended for working with Ripple and some of the endpoints provide abstractions to make it much easier to use than the traditional websocket API's.
 
-`ripple-rest` version documented: 1.0
-
-Older versions of the documentation will archived <a href="https://github.com/ripple/ripple-dev-portal/archive" target="_blank">here</a>.
+Older versions of the `ripple-rest` documentation will archived <a href="https://github.com/ripple/ripple-dev-portal/archive" target="_blank">here</a>.
 
 
 ## Available API Routes ##
@@ -49,21 +49,23 @@ While the `ripple-rest` API provides a high-level interface for sending and rece
 
 Sending a payment involves three steps:
 
-1. You need to create the payment object.  If the payment is to be made in a currency other than XRP, the Ripple system will identify the chain of trust, or ___path___, that connects the source and destination accounts; when creating the payment, the `ripple-rest` API will automatically find the set of possible paths for you.
+1. You need to generate the payment object by doing using what is called a pathfind(preparing a payment).  If the payment is to be made in a currency other than XRP, the Ripple system will identify the chain of trust, or ___path___, that connects the source and destination accounts; when creating the payment, the `ripple-rest` API will automatically find the set of possible paths for you.
 
-2. You can modify the payment object if necessary, and then ___submit___ it to the API for processing.
+2. You can modify the payment object if necessary, and then ___submit___ it to the API for processing. It is recommended to submit the payment object generated directly to prevent any errors from occuring.
 
-3. Finally, you have to ___confirm___ that the payment has gone through by checking the payment's ___status___.
+3. Finally, you have to ___confirm___ that the payment has gone through by checking the payment's ___status___. This is because the payment submission is considered an asynchronous process, payments themselves can still fail even after they have been submitted successfully.
 
-Note that when you submit a payment for processing, you have to assign a unique `client resource ID` to that payment.  This is a string which uniquely identifies the payment, and ensures that you do not accidentally submit the same payment twice.  You can also use the client resource ID to retrieve a payment once it has been submitted.
+Note that when you submit a payment for processing, you have to assign a unique `client resource identifier` to that payment.  This is a string which uniquely identifies the payment, and ensures that you do not accidentally submit the same payment twice.  You can also use the `client_resource_id` to retrieve a payment once it has been submitted.
 
 ### Transaction Types ###
 
 The Ripple protocol supports multiple types of transactions other than just payments. Transactions are considered to be any changes to the database made on behalf of a Ripple Address. Transactions are first constructed and then submitted to the network. After transaction processing, meta data is associated with the transaction which itemizes the resulting changes to the ledger.
 
-+ Payment: Payment transactions is an authorized transfer of balance from one address to another.
++ Payment: Payment transaction is an authorized transfer of balance from one address to another.
 
-+ Trustline: Trustline transactions is an authorized grant of trust between two addresses.
++ Trustline: Trustline transaction is an authorized grant of trust between two addresses.
+
++ Setting: Setting transaction is an authorized update of account flags under a Ripple Account.
 
 ## Getting Started ##
 
@@ -71,7 +73,7 @@ The Ripple protocol supports multiple types of transactions other than just paym
 
 Before you can use the `ripple-rest` API, you will need to have three things:
 
- * Installed version of `ripple-rest` running locally or remotely. Instructions on installing `ripple-rest` can be found in the readme.md file in the Github Repository <a href="https://github.com/ripple/ripple-rest" target="_blank">here</a>.
+ * An installed version of `ripple-rest` running locally or remotely. Instructions on installing `ripple-rest` can be found in the readme.md file in the Github Repository <a href="https://github.com/ripple/ripple-rest" target="_blank">here</a>.
 
  * An activated Ripple account.  If you don't have a Ripple account, you can use the Ripple web client to create one, as described in the <a href="https://ripple.com/wiki/Client_Manual" target="_blank">Client Manual</a>.  Make sure you have a copy of the Ripple address for your account; the address can be found by clicking on the __Receive__ tab in the web client.
  
@@ -84,40 +86,39 @@ As a programmer, you will also need to have a suitable HTTP client library that 
 
 Let's start by using `curl` to see if the `ripple-rest` API is currently running.  Type the following into a terminal window:
 
-`curl https://[ripple-rest-server]/v1/status`
+`curl http://[ripple-rest-server]/v1/server`
 
 After a short delay, the following response should be displayed:
 
 ```js
 {
-       "api_server_status": "online",
-       "rippled_server_url": "wss://s_west.ripple.com:443",
-       "rippled_server_status": {
-         "info": {
-           "build_version": "0.21.0-rc2",
-           "complete_ledgers": "32570-5254146",
-           "hostid": "WEAN",
-           "last_close": {
-             "converge_time_s": 2.022,
-             "proposers": 5
-           },
-           "load_factor": 1,
-           "peers": 52,
-           "pubkey_node": "n9LVyJ9GGBwHeeZ1bwPQUKj5P6vyD5tox2ozMPadMDvXx8CrPPmJ",
-           "server_state": "full",
-           "validated_ledger": {
-             "age": 6,
-             "base_fee_xrp": 1.0e-5,
-             "hash": "ADF8BEFA91F4D355C60AE37E7ED79E91591704D052114F2BBDB6AF892E5E749E",
-             "reserve_base_xrp": 20,
-             "reserve_inc_xrp": 5,
-             "seq": 5254146
-           },
-           "validation_quorum": 3
-         }
-       },
-       "api_documentation_url": "https://github.com/ripple/ripple-rest"
-     }
+  "rippled_server_url": "wss://s-west.ripple.com:443",
+  "rippled_server_status": {
+    "build_version": "0.23.0",
+    "complete_ledgers": "5526705-6142138",
+    "fetch_pack": 2004,
+    "hostid": "NEAT",
+    "last_close": {
+      "converge_time_s": 2.005,
+      "proposers": 5
+    },
+    "load_factor": 1,
+    "peers": 55,
+    "pubkey_node": "n9KmrBnGoyVf89WYdiAnvGnKFaVqjLdAYjKrBuvg2r8pMxGPp6MF",
+    "server_state": "full",
+    "validated_ledger": {
+      "age": 1,
+      "base_fee_xrp": 0.00001,
+      "hash": "BADDAB671EF21E8ED56B21253123D2C74139FE34E12DBE4B1F5527772EC88494",
+      "reserve_base_xrp": 20,
+      "reserve_inc_xrp": 5,
+      "seq": 6142138
+    },
+    "validation_quorum": 3
+  },
+  "success": true,
+  "api_documentation_url": "https://github.com/ripple/ripple-rest"
+}
 ```
 
 The `ripple-rest` API conforms to the following general behavior for a web interface:
@@ -376,7 +377,7 @@ The following URL parameters are required by this API endpoint:
 
 Optionally, you can also include the following as a query string parameter:
 
-`source_currencies` *[optional]*A comma-separated list of source currencies.  This is used to filter the returned list of possible payments.  Each source currency can be specified either as a currency code (eg, `USD`), or as a currency code and issuer (eg, `USD+r...`).  If the issuer is not specified for a currency other than XRP, then the results will be limited to the specified currency, but any issuer for that currency will be included in the results.
+`source_currencies` *[optional]* A comma-separated list of source currencies.  This is used to filter the returned list of possible payments.  Each source currency can be specified either as a currency code (eg, `USD`), or as a currency code and issuer (eg, `USD+r...`).  If the issuer is not specified for a currency other than XRP, then the results will be limited to the specified currency, but any issuer for that currency will be included in the results.
 
 Note that this call is a wrapper around the [Ripple path-find](https://ripple.com/wiki/RPC_API#path_find) command, and returns an array of [`Payment`](#payment_object) objects, like this:
 
@@ -414,7 +415,50 @@ This HTTP `POST` request must have a content-type of `application/json`, and the
 {
   "secret": "s...",
   "client_resource_id": "...",
-  "payment": { /* Payment */ }
+  "payment": {
+    "source_account": "rPs7nVbSops6xm4v77wpoPFf549cqjzUy9",
+    "source_tag": "",
+    "source_amount": {
+    "value": "1",
+    "currency": "XRP",
+    "issuer": ""
+    },
+    "source_slippage": "0",
+    "destination_account" "rKB4oSXwPkRpb2sZRhgGyRfaEhhYS6tf4M",
+    "destination_tag": "",
+    "destination_amount": {
+      "value": "1",
+      "currency": "XRP",
+      "issuer": ""
+    }, 
+    "invoice_id": "",
+    "paths": "[]",
+    "no_direct_ripple": false,
+    "partial_payment": false,
+    "direction": "outgoing",
+    "state": "validated",
+    "result": "tesSUCCESS",
+    "ledger": "6141074",
+    "hash": "85C5E6762DE7969DC1BD69B3C8C7387A5B8FCE6A416AA1F74C0ED5D10F08EADD",
+    "timestamp": "2014-04-18T01:21:00.000Z",
+    "fee": "0.000012",
+    "source_balance_changes": 
+    [ 
+      {
+        "value": "-1.000012",
+        "currency": "XRP",
+        "issuer": ""
+      }
+    ],
+    "destination_balance_changes": 
+    [
+      {
+        "value": "1",
+        "currency": "XRP",
+        "issuer": ""
+      }
+    ]
+  }
 }
 ```
 
@@ -456,46 +500,46 @@ The server will return the details of your payment:
 {
   "success": true,
   "payment": {
-    source_account: "rPs7nVbSops6xm4v77wpoPFf549cqjzUy9",
-    source_tag: "",
-    source_amount: {
-    value: "1",
-    currency: "XRP",
-    issuer: ""
+    "source_account": "rPs7nVbSops6xm4v77wpoPFf549cqjzUy9",
+    "source_tag": "",
+    "source_amount": {
+    "value": "1",
+    "currency": "XRP",
+    "issuer": ""
   },
-  source_slippage: "0",
-  destination_account: "rKB4oSXwPkRpb2sZRhgGyRfaEhhYS6tf4M",
-  destination_tag: "",
-  destination_amount: {
-    value: "1",
-    currency: "XRP",
-    issuer: ""
+  "source_slippage": "0",
+  "destination_account" "rKB4oSXwPkRpb2sZRhgGyRfaEhhYS6tf4M",
+  "destination_tag": "",
+  "destination_amount": {
+    "value": "1",
+    "currency": "XRP",
+    "issuer": ""
   }, 
-  invoice_id: "",
-  paths: "[]",
-  no_direct_ripple: false,
-  partial_payment: false,
-  direction: "outgoing",
-  state: "validated",
-  result: "tesSUCCESS",
-  ledger: "6141074",
-  hash: "85C5E6762DE7969DC1BD69B3C8C7387A5B8FCE6A416AA1F74C0ED5D10F08EADD",
-  timestamp: "2014-04-18T01:21:00.000Z",
-  fee: "0.000012",
-  source_balance_changes: 
+  "invoice_id": "",
+  "paths": "[]",
+  "no_direct_ripple": false,
+  "partial_payment": false,
+  "direction": "outgoing",
+  "state": "validated",
+  "result": "tesSUCCESS",
+  "ledger": "6141074",
+  "hash": "85C5E6762DE7969DC1BD69B3C8C7387A5B8FCE6A416AA1F74C0ED5D10F08EADD",
+  "timestamp": "2014-04-18T01:21:00.000Z",
+  "fee": "0.000012",
+  "source_balance_changes": 
   [ 
     {
-      value: "-1.000012",
-      currency: "XRP",
-      issuer: ""
+      "value": "-1.000012",
+      "currency": "XRP",
+      "issuer": ""
     }
   ],
-  destination_balance_changes: 
+  "destination_balance_changes": 
   [
     {
-      value: "1",
-      currency: "XRP",
-      issuer: ""
+      "value": "1",
+      "currency": "XRP",
+      "issuer": ""
     }
   ]
 }
@@ -521,8 +565,20 @@ As well as sending payments, your application will need to know when incoming pa
 
 __`GET /v1/accounts/{:address}/payments`__
 
-This will return the most recent payments (both incoming and outgoing), up to a maximum of 20.
+This will return the most recent payments (both incoming and outgoing will be denoted in the direction)
 
+```js
+{
+  "success": true,
+  "payments": [
+    { /* payment */ }.
+    { /* payment */ }.
+    { /* payment */ }.
+    { /* payment */ }.
+    { /* payment */ }
+  ]    
+}
+```
 <!-- __`GET /v1/accounts/{:address}/payments?direction=incoming`__
 
 This will return the most recent incoming payments for your account, up to a maximum of 20.  You can process these historical payments if you want, and also retrieve more historical payments if you need to by using the `page` parameter, as described in the [Payment History](#payment-history) section below.
@@ -665,24 +721,14 @@ The following account settings are currently supported:
 + `RequireAuth` If this is set to `true`, incoming trustlines will only be validated if this account first creates a trustline to the counterparty with the authorized flag set to true.  This may be used by gateways to prevent accounts unknown to them from holding currencies they issue.
 
 + `DisallowXRP` If this is set to `true`, payments in XRP will not be allowed.
- 
-+ `DisableMaster` This is not currently documented.
-
-+ `Sequence` This is not currently documented.
 
 + `EmailHash` The MD5 128-bit hash of the account owner's email address, if known.
-
-+ `WalletLocator` This is not currently documented.
-
-+ `WalletSize` This is not currently documented.
  
 + `MessageKey` An optional public key, represented as a hex string, that can be used to allow others to send encrypted messages to the account owner.
 
 + `Domain` The domain name associated with this account.
  
 + `TransferRate` The rate charged each time a holder of currency issued by this account transfers some funds.  The default rate is `"1.0"; a rate of `"1.01"` is a 1% charge on top of the amount being transferred.  Up to nine decimal places are supported.
-
-+ `Signers` This is not currently documented.
 
 ## Updating Account Settings ##
 
@@ -714,9 +760,74 @@ The given settings will be updated.
 
 __`GET /v1/account/{:address}/trustlines`__
 
+Retrieves all trustlines associated with the Ripple address. Upon completion, the server will return a JSON object which represents each trustline individually along with the currency, limit, and counterparty. 
+
+The following query string parameters are supported to provide additional filtering for either trustlines to a particular currency or trustlines from a specific counterparty:
+
++ `currency` Three letter currency denominations (i.e. USD, BTC).
++ `counterparty` Ripple address of the counterparty trusted.
+
+__`GET /v1/account/{:address}/trustlines?currency=USD&counterparty=rPs723Dsd...`__
+
+The object returned looks like this:
+
+```js
+{
+  "success": true,
+  "lines": [
+    {
+      "account": "rPs7nVbSops6xm4v77wpoPFf549cqjzUy9",
+      "counterparty": "rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q",
+      "currency": "USD",
+      "trust_limit": "100",
+      "reciprocated_trust_limit": "0",
+      "account_allows_rippling": false,
+      "counterparty_allows_rippling": true
+    },
+    {
+      "account": "rPs7nVbSops6xm4v77wpoPFf549cqjzUy9",
+      "counterparty": "rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs58B",
+      "currency": "BTC",
+      "trust_limit": "5",
+      "reciprocated_trust_limit": "0",
+      "account_allows_rippling": false,
+      "counterparty_allows_rippling": true
+    },
+    { /* trustline */ },
+    { /* trustline */ },
+    { /* trustline */ }
+  ]
+}
+```
+
 ## Granting a Trustline ##
 
 __`POST /v1/account/{:address}/trustlines`__
+
+A trustline can also updated and simply set with a currency,amount,counterparty combination by submitting to this endpoint with the following JSON object.
+
+```js
+{
+  "secret": "sneThnzgBgxc3zXPG....",
+  "limit": "100/USD/rP34dkxlD098d..."
+}
+```
+A successful submission will result in a returning JSON object that includes a transaction hash to the trustline transaction.
+
+```js
+{
+  "success": true,
+  "line": {
+    "account": "rPs7nVbSops6xm4v77wpoPGf549cqjzUy9",
+    "counterparty": "rKB4oSXwPkRpb2sZRhgGyRfaEhhYS6tf4M",
+    "currency": "USD",
+    "trust_limit": "100",
+    "allows_rippling": true
+  },
+  "ledger": "6146255",
+  "hash": "6434F18B3997D81152F1AB31911E8D40E1346A05478419B7B3DF78B270C1151A"
+}
+```
 
 # RIPPLED SERVER STATUS #
 
@@ -790,9 +901,9 @@ If the server is not currently connected to the Ripple network, the following er
 
 ## Retrieve Ripple Transaction ##
 
-While the `ripple-rest` API is a high-level API built on top of the `rippled` server, there are times when you may need to access an underlying Ripple transaction rather than dealing with the `ripple-rest` API directly.  When you need to do this, you can retrieve the standard Ripple transaction by using the following endpoint:
+While the `ripple-rest` API is a high-level API built on top of the `rippled` server, there are times when you may need to access an underlying Ripple transaction rather than dealing with the `ripple-rest` data format.  When you need to do this, you can retrieve a standard Ripple formatted transaction by using the following endpoint:
 
-__`GET /v1/transactions/{tx_hash}`__
+__`GET /v1/tx/{:transaction_hash}`__
 
 This retrieves the underlying Ripple transaction with the given transaction hash value.  Upon completion, the server will return following JSON object:
 
