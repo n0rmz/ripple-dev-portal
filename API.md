@@ -202,27 +202,27 @@ This `Payment` format is intended to be straightforward to create and parse, fro
 ```
 -->
 
- + `src_address` is the Ripple address for the source account, as a string.
+ + `source_address` is the Ripple address for the source account, as a string.
  
- + `dst_address` is the Ripple address for the destination account, as a string.
+ + `destination_address` is the Ripple address for the destination account, as a string.
  
- + `dst_amount` is an [Amount](#amount_object) object representing the amount that should be deposited into the destination account.
+ + `destination_amount` is an [Amount](#amount_object) object representing the amount that should be deposited into the destination account.
 
 The full set of fields accepted on `Payment` submission is as follows:
 
-+ `src_tag` is an optional unsigned 32 bit integer (0-4294967294, inclusive) that is generally used if the sender is a hosted wallet at a gateway. This should be the same as the `dst_tag` used to identify the hosted wallet when they are receiving a payment.
++ `source_tag` is an optional unsigned 32 bit integer (0-4294967294, inclusive) that is generally used if the sender is a hosted wallet at a gateway. This should be the same as the `destination_tag` used to identify the hosted wallet when they are receiving a payment.
 
-+ `dst_tag` is an optional unsigned 32 bit integer (0-4294967294, inclusive) that is generally used if the receiver is a hosted wallet at a gateway.
++ `destination_tag` is an optional unsigned 32 bit integer (0-4294967294, inclusive) that is generally used if the receiver is a hosted wallet at a gateway.
 
-+ `src_slippage` can be specified to give the `src_amount` a cushion and increase its chance of being processed successfully. This is helpful if the payment path changes slightly between the time when a payment options quote is given and when the payment is submitted. The `src_address` will never be charged more than `src_slippage` + the `value` specified in `src_amount`.
++ `source_slippage` can be specified to give the `source_amount` a cushion and increase its chance of being processed successfully. This is helpful if the payment path changes slightly between the time when a payment options quote is given and when the payment is submitted. The `source_address` will never be charged more than `source_slippage` + the `value` specified in `source_amount`.
 
 + `invoice_id` is an optional 256-bit hash field that can be used to link payments to an invoice or bill.
 
 + `paths` is a "stringified" version of the Ripple PathSet structure. Most users of this API will want to treat this field as opaque. See the [Ripple Wiki](https://ripple.com/wiki/Payment_paths) for more information about Ripple pathfinding.
 
-+ `flag_no_direct_ripple` is a boolean that can be set to `true` if `paths` are specified and the sender would like the Ripple Network to disregard any direct paths from the `src_address` to the `dst_address`. This may be used to take advantage of an arbitrage opportunity or by gateways wishing to issue balances from a hot wallet to a user who has mistakenly set a trustline directly to the hot wallet. Most users will not need to use this option.
++ `flag_no_direct_ripple` is a boolean that can be set to `true` if `paths` are specified and the sender would like the Ripple Network to disregard any direct paths from the `source_address` to the `destination_address`. This may be used to take advantage of an arbitrage opportunity or by gateways wishing to issue balances from a hot wallet to a user who has mistakenly set a trustline directly to the hot wallet. Most users will not need to use this option.
 
-+ `flag_partial_payment` is a boolean that, if set to true, indicates that this payment should go through even if the whole amount cannot be sent because of a lack of liquidity or funds in the `src_address` account. The vast majority of senders will never need to use this option.
++ `flag_partial_payment` is a boolean that, if set to true, indicates that this payment should go through even if the whole amount cannot be sent because of a lack of liquidity or funds in the `source_address` account. The vast majority of senders will never need to use this option.
 
 Payment Object:
 
@@ -230,17 +230,17 @@ Payment Object:
 {
     /* User Specified */
 
-    "src_address": "rKXCummUHnenhYudNb9UoJ4mGBR75vFcgz",
-    "src_tag": "",
-    "src_amount": {
+    "source_address": "rKXCummUHnenhYudNb9UoJ4mGBR75vFcgz",
+    "source_tag": "",
+    "source_amount": {
         "value": "0.001",
         "currency": "XRP",
         "issuer": ""
     },
-    "src_slippage": "0",
-    "dst_address": "rNw4ozCG514KEjPs5cDrqEcdsi31Jtfm5r",
-    "dst_tag": "",
-    "dst_amount": {
+    "source_slippage": "0",
+    "destination_address": "rNw4ozCG514KEjPs5cDrqEcdsi31Jtfm5r",
+    "destination_tag": "",
+    "destination_amount": {
         "value": "0.001",
         "currency": "XRP",
         "issuer": ""
@@ -254,7 +254,7 @@ Payment Object:
     "flag_partial_payment": false
 }
 ```
-
+<!--
 
 When a payment is confirmed in the Ripple ledger, it will have additional fields added:
 
@@ -294,7 +294,7 @@ When a payment is confirmed in the Ripple ledger, it will have additional fields
     }]
 }
 ```
-<!-- I've commented this out as we don't seem to need it.
+I've commented this out as we don't seem to need it.
 
 #### 3. Notification ####
 
@@ -604,7 +604,13 @@ The server will return a list of the current settings in force for the given acc
 {
   "success": true,
   "settings": {
-    /* settings */
+    "transfer_rate": 100,
+    "password_spent": false,
+    "require_destination_tag": false,
+    "require_authorization": false,
+    "disallow_xrp": false,
+    "disable_master": false,
+    "transaction_sequence": 22
   }
 }
 ```
@@ -648,7 +654,15 @@ __`POST /v1/accounts/{account}/settings`__
 {
   "account": "r...",
   "secret": "s...",
-  "settings": {/* Settings */}
+  "settings": {
+    "transfer_rate": 100,
+    "password_spent": false,
+    "require_destination_tag": false,
+    "require_authorization": false,
+    "disallow_xrp": false,
+    "disable_master": false,
+    "transaction_sequence": 22
+  }
 }
 ```
 
@@ -675,6 +689,13 @@ __`GET /v1/server/connected`__
 Checks to see if the `ripple-rest` API is currently connected to a `rippled` server, and is ready to be used.  This provides a quick and easy way to check to see if the API is up and running, before attempting to process transactions.
 
 No additional parameters are required.  Upon completion, the server will return `true` if the API is connected, and `false` otherwise.
+
+```js
+{
+  "success": true,
+  "connected": true
+}
+```
 
 ## Get Server Status ##
 <span></span>
